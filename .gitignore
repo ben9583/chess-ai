@@ -1,0 +1,5 @@
+# IDE files
+/.idea
+/chess_ai.iml
+# Output files
+/target
