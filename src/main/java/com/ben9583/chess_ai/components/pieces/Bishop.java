@@ -18,6 +18,14 @@ public class Bishop extends DirectionalPiece {
     }
 
     @Override
+    public String getIconPath() {
+        if(this.getPlayer().equals(Player.WHITE))
+            return "src/main/resources/images/piece_icons/wb.png";
+        else
+            return "src/main/resources/images/piece_icons/bb.png";
+    }
+
+    @Override
     public int getValue() {
         return 3;
     }

@@ -23,6 +23,8 @@ public abstract class Piece {
 
     public abstract int getValue();
 
+    public abstract String getIconPath();
+
     public abstract Vector2[] getMovableSquares();
 
     protected boolean isValidTarget(Vector2 position) {

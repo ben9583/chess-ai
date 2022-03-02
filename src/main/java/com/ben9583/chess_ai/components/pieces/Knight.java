@@ -22,6 +22,14 @@ public class Knight extends PositionalPiece {
     }
 
     @Override
+    public String getIconPath() {
+        if(this.getPlayer().equals(Player.WHITE))
+            return "src/main/resources/images/piece_icons/wn.png";
+        else
+            return "src/main/resources/images/piece_icons/bn.png";
+    }
+
+    @Override
     public int getValue() {
         return 3;
     }

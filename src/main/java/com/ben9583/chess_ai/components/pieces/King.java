@@ -34,6 +34,14 @@ public class King extends PositionalPiece {
     }
 
     @Override
+    public String getIconPath() {
+        if(this.getPlayer().equals(Player.WHITE))
+            return "src/main/resources/images/piece_icons/wk.png";
+        else
+            return "src/main/resources/images/piece_icons/bk.png";
+    }
+
+    @Override
     protected Vector2[] getRelativeSquares() {
         List<Vector2> out = new ArrayList<>(Arrays.asList(King.relativeSquares));
 

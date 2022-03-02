@@ -19,6 +19,14 @@ public class Pawn extends Piece {
     }
 
     @Override
+    public String getIconPath() {
+        if(this.getPlayer().equals(Player.WHITE))
+            return "src/main/resources/images/piece_icons/wp.png";
+        else
+            return "src/main/resources/images/piece_icons/bp.png";
+    }
+
+    @Override
     public Vector2[] getMovableSquares() {
         Vector2 moveToConsider;
         Vector2 firstMoveToConsider;

@@ -27,6 +27,14 @@ public class Queen extends DirectionalPiece {
     }
 
     @Override
+    public String getIconPath() {
+        if(this.getPlayer().equals(Player.WHITE))
+            return "src/main/resources/images/piece_icons/wq.png";
+        else
+            return "src/main/resources/images/piece_icons/bq.png";
+    }
+
+    @Override
     protected Vector2[] getRelativeSquares() {
         return Queen.relativeSquares;
     }
