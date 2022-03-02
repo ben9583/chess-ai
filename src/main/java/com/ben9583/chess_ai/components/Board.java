@@ -108,12 +108,15 @@ public class Board {
         this.halfMoveClock++;
 
         if(this.isCheckmate(this.whoseTurn)) System.out.println("Checkmate! " + (this.whoseTurn.equals(Player.WHITE) ? "Black" : "White") + " wins.");
+        if(this.halfMoveClock == 50) System.out.println("Draw by 50-move rule.");
     }
 
     public void movePiece(Piece piece, Vector2 end) {
         if(!piece.getPlayer().equals(this.whoseTurn)) throw new IllegalArgumentException("It's Player " + this.whoseTurn + "'s turn, but a piece that tried to move belongs to player " + piece.getPlayer() + ".");
 
         Piece removedPiece = this.setPosition(piece, end);
+        if(removedPiece != null) this.resetHalfMoveClock();
+        
         this.nextTurn();
     }
 
@@ -226,5 +229,9 @@ public class Board {
 
     public void setEnPassantPosition(@Nullable Vector2 position) {
         this.enPassantPosition = position;
+    }
+
+    public void resetHalfMoveClock() {
+        this.halfMoveClock = 0;
     }
 }

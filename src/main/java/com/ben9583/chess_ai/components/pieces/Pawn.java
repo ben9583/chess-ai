@@ -71,5 +71,7 @@ public class Pawn extends Piece {
         } else {
             super.getBoard().setEnPassantPosition(null);
         }
+
+        super.getBoard().resetHalfMoveClock();
     }
 }
