@@ -22,4 +22,8 @@ public class ChessAIWindow {
         frame.repaint();
         frame.setVisible(true);
     }
+
+    public ChessAIScene getScene() {
+        return this.scene;
+    }
 }
