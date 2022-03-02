@@ -174,6 +174,17 @@ public class Board {
         return inCheck;
     }
 
+    public boolean isCheckmate(Player player) {
+        for(Piece p : this.pieces.keySet()) {
+            if(p.getPlayer().equals(player)) {
+                Vector2[] movableSquares = p.getMovableSquares();
+                if(movableSquares.length > 0) return false;
+            }
+        }
+
+        return true;
+    }
+
     public boolean isCastleWhiteKing() {
         return this.castleWhiteKing;
     }
