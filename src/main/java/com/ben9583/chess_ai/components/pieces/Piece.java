@@ -29,7 +29,7 @@ public abstract class Piece {
         if(!this.board.boardExistsAt(position)) return false;
 
         Piece target = this.board.getPieceAtPosition(position);
-        return target == null || !target.getPlayer().equals(this.player);
+        return (target == null || !target.getPlayer().equals(this.player)) && !this.board.movePlacesInCheck(this, position);
     }
 
     public void movePiece(Vector2 position) {

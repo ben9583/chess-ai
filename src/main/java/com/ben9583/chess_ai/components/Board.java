@@ -125,6 +125,12 @@ public class Board {
         return target;
     }
 
+    public void placePiece(Piece piece, Vector2 position) {
+        if(this.getPieceAtPosition(position) != null) throw new IllegalArgumentException("Tried to insert " + piece + " at " + position + ", but " + this.getPieceAtPosition(position) + " was already there.");
+        this.board[position.getY()][position.getX()] = piece;
+        this.pieces.put(piece, position);
+    }
+
     @NotNull
     public Vector2 removePiece(Piece target) {
         Vector2 position = this.getPosition(target);
@@ -132,6 +138,40 @@ public class Board {
         this.pieces.remove(target);
         this.board[position.getY()][position.getX()] = null;
         return position;
+    }
+
+    public boolean isInCheck(Player target) {
+        Player attacker;
+        if(target.equals(Player.WHITE))
+            attacker = Player.BLACK;
+        else
+            attacker = Player.WHITE;
+
+        for(Piece p : this.pieces.keySet()) {
+            if(p.getPlayer().equals(attacker)) {
+                Vector2[] attackingSquares = p.getMovableSquares();
+                for(Vector2 square : attackingSquares) {
+                    Piece attackedPiece = this.getPieceAtPosition(square);
+                    if(attackedPiece instanceof King && attackedPiece.getPlayer().equals(target)) {
+                        return true;
+                    }
+                }
+            }
+        }
+
+        return false;
+    }
+
+    public boolean movePlacesInCheck(Piece movingPiece, Vector2 end) {
+        Vector2 start = this.getPosition(movingPiece);
+        Piece attackedPiece = this.setPosition(movingPiece, end);
+
+        boolean inCheck = this.isInCheck(this.whoseTurn);
+
+        this.setPosition(movingPiece, start);
+        this.placePiece(attackedPiece, end);
+
+        return inCheck;
     }
 
     public boolean isCastleWhiteKing() {
@@ -148,6 +188,22 @@ public class Board {
 
     public boolean isCastleBlackQueen() {
         return this.castleBlackQueen;
+    }
+
+    public void disableCastleWhiteKing() {
+        this.castleWhiteKing = false;
+    }
+
+    public void disableCastleWhiteQueen() {
+        this.castleWhiteQueen = false;
+    }
+
+    public void disableCastleBlackKing() {
+        this.castleBlackKing = false;
+    }
+
+    public void disableCastleBlackQueen() {
+        this.castleBlackQueen = false;
     }
 
     @Nullable
