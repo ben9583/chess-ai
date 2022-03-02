@@ -37,10 +37,35 @@ public class King extends PositionalPiece {
     protected Vector2[] getRelativeSquares() {
         List<Vector2> out = new ArrayList<>(Arrays.asList(King.relativeSquares));
 
+        if(super.getPlayer().equals(Player.WHITE)) {
+            if(super.getBoard().isCastleWhiteKing() && out.contains(Vector2.EAST) && super.isValidTarget(new Vector2(2, 0))) {
+                out.add(new Vector2(2, 0));
+            }
+            if(super.getBoard().isCastleWhiteQueen() && out.contains(Vector2.WEST) && super.isValidTarget(new Vector2(-2, 0))) {
+                out.add(new Vector2(-2, 0));
+            }
+        } else {
+            if(super.getBoard().isCastleBlackKing() && out.contains(Vector2.EAST) && super.isValidTarget(new Vector2(2, 0))) {
+                out.add(new Vector2(2, 0));
+            }
+            if(super.getBoard().isCastleBlackQueen() && out.contains(Vector2.WEST) && super.isValidTarget(new Vector2(-2, 0))) {
+                out.add(new Vector2(-2, 0));
+            }
+        }
 
         return King.relativeSquares;
     }
 
     @Override
-    protected void pieceMoved(Vector2 position) {}
+    protected void pieceMoved(Vector2 position) {
+        if(Math.abs(super.getPosition().getX() - position.getX()) == 2) {
+            if(super.getPlayer().equals(Player.WHITE)) {
+                super.getBoard().disableCastleWhiteKing();
+                super.getBoard().disableCastleWhiteQueen();
+            } else {
+                super.getBoard().disableCastleBlackKing();
+                super.getBoard().disableCastleBlackQueen();
+            }
+        }
+    }
 }
