@@ -46,18 +46,18 @@ public class King extends PositionalPiece {
         List<Vector2> out = new ArrayList<>(Arrays.asList(King.relativeSquares));
 
         if(super.getPlayer().equals(Player.WHITE)) {
-            if(super.getBoard().isCastleWhiteKing() && out.contains(Vector2.EAST) && super.isValidTarget(new Vector2(2, 0))) {
-                out.add(new Vector2(2, 0));
+            if(super.getBoard().isCastleWhiteKing() && out.contains(Vector2.EAST) && super.isValidTarget(kingSideCastleSquare)) {
+                out.add(kingSideCastleSquare);
             }
-            if(super.getBoard().isCastleWhiteQueen() && out.contains(Vector2.WEST) && super.isValidTarget(new Vector2(-2, 0))) {
-                out.add(new Vector2(-2, 0));
+            if(super.getBoard().isCastleWhiteQueen() && out.contains(Vector2.WEST) && super.isValidTarget(queenSideCastleSquare)) {
+                out.add(queenSideCastleSquare);
             }
         } else {
-            if(super.getBoard().isCastleBlackKing() && out.contains(Vector2.EAST) && super.isValidTarget(new Vector2(2, 0))) {
-                out.add(new Vector2(2, 0));
+            if(super.getBoard().isCastleBlackKing() && out.contains(Vector2.EAST) && super.isValidTarget(kingSideCastleSquare)) {
+                out.add(kingSideCastleSquare);
             }
-            if(super.getBoard().isCastleBlackQueen() && out.contains(Vector2.WEST) && super.isValidTarget(new Vector2(-2, 0))) {
-                out.add(new Vector2(-2, 0));
+            if(super.getBoard().isCastleBlackQueen() && out.contains(Vector2.WEST) && super.isValidTarget(queenSideCastleSquare)) {
+                out.add(queenSideCastleSquare);
             }
         }
 
