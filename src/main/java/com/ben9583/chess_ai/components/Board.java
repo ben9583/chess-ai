@@ -127,9 +127,8 @@ public class Board {
 
     @NotNull
     public Vector2 removePiece(Piece target) {
-        if(target == null) throw new IllegalArgumentException("Tried to remove piece " + target + ", but it wasn't on the board.");
         Vector2 position = this.getPosition(target);
-
+        
         this.pieces.remove(target);
         this.board[position.getY()][position.getX()] = null;
         return position;
