@@ -34,6 +34,9 @@ public abstract class Piece {
 
     public void movePiece(Vector2 position) {
         this.pieceMoved(position);
+        if(!(this instanceof Pawn)) {
+            this.board.setEnPassantPosition(null);
+        }
 
         this.board.movePiece(this, position);
     }
