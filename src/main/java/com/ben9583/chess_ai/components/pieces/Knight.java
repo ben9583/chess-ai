@@ -5,8 +5,6 @@ import com.ben9583.chess_ai.components.Player;
 import com.ben9583.chess_ai.utils.Vector2;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Arrays;
-
 public class Knight extends PositionalPiece {
     private static final Vector2[] relativeSquares = {
             new Vector2(1, 2),
