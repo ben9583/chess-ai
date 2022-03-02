@@ -116,7 +116,7 @@ public class Board {
 
         Piece removedPiece = this.setPosition(piece, end);
         if(removedPiece != null) this.resetHalfMoveClock();
-        
+
         this.nextTurn();
     }
 
