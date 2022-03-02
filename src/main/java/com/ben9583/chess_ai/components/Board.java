@@ -106,6 +106,8 @@ public class Board {
             this.fullMoveNumber++;
         }
         this.halfMoveClock++;
+
+        if(this.isCheckmate(this.whoseTurn)) System.out.println("Checkmate! " + (this.whoseTurn.equals(Player.WHITE) ? "Black" : "White") + " wins.");
     }
 
     public void movePiece(Piece piece, Vector2 end) {
