@@ -62,7 +62,7 @@ public class Pawn extends Piece {
             }
         }
 
-        if(Math.abs(super.getPosition().sub(position).getY()) == 2) {
+        if(Math.abs(super.getPosition().getY() - position.getY()) == 2) {
             if(super.getPlayer().equals(Player.WHITE)) {
                 super.getBoard().setEnPassantPosition(position.add(Vector2.SOUTH));
             } else {
