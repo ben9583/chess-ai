@@ -9,6 +9,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class Board {
+
     private final Piece[][] board;
     private final Map<Piece, Vector2> pieces;
     private Player whoseTurn;
@@ -32,25 +33,6 @@ public class Board {
                 { new Rook(Player.BLACK, this), new Knight(Player.BLACK, this), new Bishop(Player.BLACK, this), new Queen(Player.BLACK, this), new King(Player.BLACK, this), new Bishop(Player.BLACK, this), new Knight(Player.BLACK, this), new Rook(Player.BLACK, this) }
         };
 
-        this.pieces = new HashMap<>();
-
-        for(int i = 0; i < this.board.length; i++) {
-            for(int j = 0; j < this.board[i].length; j++) {
-                if(this.board[i][j] != null) {
-                    this.pieces.put(this.board[i][j], new Vector2(j, i));
-                }
-            }
-        }
-
-        this.whoseTurn = Player.WHITE;
-        this.castleWhiteKing = true;
-        this.castleWhiteQueen = true;
-        this.castleBlackKing = true;
-        this.castleBlackQueen = true;
-    }
-
-    public Board(Piece[][] board) {
-        this.board = board;
         this.pieces = new HashMap<>();
 
         for(int i = 0; i < this.board.length; i++) {

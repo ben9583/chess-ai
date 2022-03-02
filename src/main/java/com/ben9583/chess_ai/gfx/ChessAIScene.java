@@ -1,30 +1,30 @@
 package com.ben9583.chess_ai.gfx;
 
+import com.ben9583.chess_ai.components.Board;
 import com.ben9583.chess_ai.gfx.components.Board2D;
 
 import javax.swing.*;
 import java.awt.*;
 
 public class ChessAIScene extends JComponent {
-    public final Board2D board;
-    public ChessAIScene() {
+    public final Board2D board2d;
+    public ChessAIScene(Board board) {
         super();
 
-        this.board = new Board2D(8, 8);
-        super.add(board);
-        board.setBounds(0, 0, 1920, 1080);
+        this.board2d = new Board2D(8, 8, board);
+        super.add(board2d);
+        board2d.setBounds(0, 0, 1920, 1080);
+        super.setVisible(true);
     }
 
     @Override
     public void paintComponent(Graphics g) {
-        if(!(g instanceof Graphics2D)) return;
-        Graphics2D g2 = (Graphics2D)g;
+        if(!(g instanceof Graphics2D g2)) return;
 
         g2.setColor(new Color(10, 20, 50));
         g2.fillRect(0, 0, 1920, 1080);
 
         super.revalidate();
         super.repaint();
-        super.setVisible(true);
     }
 }

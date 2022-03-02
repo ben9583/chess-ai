@@ -10,20 +10,14 @@ public class ChessGame {
 
     @Nullable
     private ChessAIWindow window = null;
-    @Nullable
-    private ChessAIScene scene = null;
 
     @NotNull
     private final Board board;
 
     public ChessGame(boolean graphicsEnabled) {
-        if(graphicsEnabled) {
-            this.window = new ChessAIWindow();
-            this.scene = this.window.getScene();
-        }
-
         this.board = new Board();
+        if(graphicsEnabled) {
+            this.window = new ChessAIWindow(this.board);
+        }
     }
-
-
 }
