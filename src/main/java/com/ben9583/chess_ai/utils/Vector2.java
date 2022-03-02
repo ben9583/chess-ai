@@ -1,6 +1,16 @@
 package com.ben9583.chess_ai.utils;
 
 public class Vector2 {
+    public static final Vector2 NORTH = new Vector2(0, 1);
+    public static final Vector2 SOUTH = new Vector2(0, -1);
+    public static final Vector2 EAST = new Vector2(1, 0);
+    public static final Vector2 WEST = new Vector2(-1, 0);
+
+    public static final Vector2 NORTHEAST = new Vector2(1, 1);
+    public static final Vector2 SOUTHEAST = new Vector2(1, -1);
+    public static final Vector2 SOUTHWEST = new Vector2(-1, -1);
+    public static final Vector2 NORTHWEST = new Vector2(-1, 1);
+
     private final int x;
     private final int y;
 

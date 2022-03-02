@@ -16,6 +16,9 @@ public class Board {
     private boolean castleWhiteQueen;
     private boolean castleBlackKing;
     private boolean castleBlackQueen;
+    private Vector2 enPassantPosition = null;
+    private int halfMoveClock = 0;
+    private int fullMoveNumber = 0;
 
     public Board() {
         this.board = new Piece[][]{
@@ -45,6 +48,10 @@ public class Board {
         this.castleWhiteQueen = true;
         this.castleBlackKing = true;
         this.castleBlackQueen = true;
+    }
+
+    public boolean boardExistsAt(Vector2 location) {
+        return location.getY() < this.board.length && location.getX() < this.board[location.getY()].length;
     }
 
     @Nullable
@@ -88,7 +95,9 @@ public class Board {
             this.whosTurn = Player.BLACK;
         } else {
             this.whosTurn = Player.WHITE;
+            this.fullMoveNumber++;
         }
+        this.halfMoveClock++;
     }
 
     public void movePiece(Piece piece, Vector2 end) {

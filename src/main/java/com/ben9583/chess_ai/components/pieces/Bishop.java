@@ -5,7 +5,14 @@ import com.ben9583.chess_ai.components.Player;
 import com.ben9583.chess_ai.utils.Vector2;
 import org.jetbrains.annotations.NotNull;
 
-public class Bishop extends Piece {
+public class Bishop extends DirectionalPiece {
+    private static final Vector2[] relativeSquares = {
+            Vector2.NORTHEAST,
+            Vector2.SOUTHEAST,
+            Vector2.SOUTHWEST,
+            Vector2.NORTHWEST
+    };
+
     public Bishop(@NotNull Player player, @NotNull Board board) {
         super(player, board);
     }
@@ -16,7 +23,7 @@ public class Bishop extends Piece {
     }
 
     @Override
-    public Vector2[] getMovableSquares() {
-        throw new UnsupportedOperationException();
+    protected Vector2[] getRelativeSquares() {
+        return Bishop.relativeSquares;
     }
 }

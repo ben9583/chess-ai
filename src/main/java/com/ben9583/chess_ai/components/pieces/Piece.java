@@ -20,6 +20,23 @@ public abstract class Piece {
 
     public abstract Vector2[] getMovableSquares();
 
+    protected boolean isValidTarget(Vector2 position) {
+        if(!this.board.boardExistsAt(position)) return false;
+
+        Piece target = this.board.getPieceAtPosition(position);
+        return target == null || !target.getPlayer().equals(this.player);
+    }
+
+    public void pieceMoved(Vector2 position) {
+        this.board.movePiece(this, position);
+    }
+
+    @NotNull
+    public Vector2 getPosition() {
+        return this.board.getPosition(this);
+    }
+
+    @NotNull
     public Player getPlayer() {
         return this.player;
     }
