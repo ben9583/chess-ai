@@ -16,6 +16,11 @@ public abstract class Piece {
         this.board = board;
     }
 
+    @Override
+    public String toString() {
+        return (this.player.equals(Player.WHITE) ? "White" : "Black") + super.toString();
+    }
+
     public abstract int getValue();
 
     public abstract Vector2[] getMovableSquares();
