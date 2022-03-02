@@ -26,4 +26,7 @@ public class Bishop extends DirectionalPiece {
     protected Vector2[] getRelativeSquares() {
         return Bishop.relativeSquares;
     }
+
+    @Override
+    protected void pieceMoved(Vector2 position) {}
 }

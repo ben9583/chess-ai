@@ -32,4 +32,7 @@ public class Knight extends PositionalPiece {
     protected Vector2[] getRelativeSquares() {
         return Knight.relativeSquares;
     }
+
+    @Override
+    protected void pieceMoved(Vector2 position) {}
 }

@@ -26,4 +26,7 @@ public class Rook extends DirectionalPiece {
     protected Vector2[] getRelativeSquares() {
         return Rook.relativeSquares;
     }
+
+    @Override
+    protected void pieceMoved(Vector2 position) {}
 }

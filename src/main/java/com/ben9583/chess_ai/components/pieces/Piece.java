@@ -27,9 +27,13 @@ public abstract class Piece {
         return target == null || !target.getPlayer().equals(this.player);
     }
 
-    public void pieceMoved(Vector2 position) {
+    public void movePiece(Vector2 position) {
+        this.pieceMoved(position);
+
         this.board.movePiece(this, position);
     }
+
+    protected abstract void pieceMoved(Vector2 position);
 
     @NotNull
     public Vector2 getPosition() {
@@ -39,5 +43,10 @@ public abstract class Piece {
     @NotNull
     public Player getPlayer() {
         return this.player;
+    }
+
+    @NotNull
+    public Board getBoard() {
+        return this.board;
     }
 }

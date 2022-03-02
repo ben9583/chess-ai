@@ -11,7 +11,7 @@ import java.util.Map;
 public class Board {
     private final Piece[][] board;
     private final Map<Piece, Vector2> pieces;
-    private Player whosTurn;
+    private Player whoseTurn;
     private boolean castleWhiteKing;
     private boolean castleWhiteQueen;
     private boolean castleBlackKing;
@@ -33,7 +33,16 @@ public class Board {
         };
 
         this.pieces = new HashMap<>();
-        this.whosTurn = Player.WHITE;
+
+        for(int i = 0; i < this.board.length; i++) {
+            for(int j = 0; j < this.board[i].length; j++) {
+                if(this.board[i][j] != null) {
+                    this.pieces.put(this.board[i][j], new Vector2(j, i));
+                }
+            }
+        }
+
+        this.whoseTurn = Player.WHITE;
         this.castleWhiteKing = true;
         this.castleWhiteQueen = true;
         this.castleBlackKing = true;
@@ -43,7 +52,16 @@ public class Board {
     public Board(Piece[][] board) {
         this.board = board;
         this.pieces = new HashMap<>();
-        this.whosTurn = Player.WHITE;
+
+        for(int i = 0; i < this.board.length; i++) {
+            for(int j = 0; j < this.board[i].length; j++) {
+                if(this.board[i][j] != null) {
+                    this.pieces.put(this.board[i][j], new Vector2(j, i));
+                }
+            }
+        }
+
+        this.whoseTurn = Player.WHITE;
         this.castleWhiteKing = true;
         this.castleWhiteQueen = true;
         this.castleBlackKing = true;
@@ -67,43 +85,78 @@ public class Board {
         this.board[location.getY()][location.getX()] = piece;
         this.board[start.getY()][start.getX()] = null;
 
+        this.pieces.put(piece, location);
+
         return pieceAtLocation;
     }
 
     @NotNull
     public Vector2 getPosition(Piece piece) {
         Vector2 location = this.pieces.getOrDefault(piece, null);
-        if(location == null) {
-            for(int i = 0; i < this.board.length; i++) {
-                for (int j = 0; j < this.board[i].length; j++) {
-                    if (this.board[i][j].equals(piece)) {
-                        location = new Vector2(j, i);
-                        this.pieces.put(piece, location);
-                        return location;
-                    }
-                }
-            }
-
-            throw new IllegalArgumentException("Piece " + piece + " was not found in this board.");
-        }
+        if(location == null) throw new IllegalArgumentException("Piece " + piece + " was not found in this board.");
 
         return location;
     }
 
     private void nextTurn() {
-        if(this.whosTurn.equals(Player.WHITE)) {
-            this.whosTurn = Player.BLACK;
+        if(this.whoseTurn.equals(Player.WHITE)) {
+            this.whoseTurn = Player.BLACK;
         } else {
-            this.whosTurn = Player.WHITE;
+            this.whoseTurn = Player.WHITE;
             this.fullMoveNumber++;
         }
         this.halfMoveClock++;
     }
 
     public void movePiece(Piece piece, Vector2 end) {
-        if(!piece.getPlayer().equals(this.whosTurn)) throw new IllegalArgumentException("It's Player " + this.whosTurn + "'s turn, but a piece that tried to move belongs to player " + piece.getPlayer() + ".");
+        if(!piece.getPlayer().equals(this.whoseTurn)) throw new IllegalArgumentException("It's Player " + this.whoseTurn + "'s turn, but a piece that tried to move belongs to player " + piece.getPlayer() + ".");
 
         Piece removedPiece = this.setPosition(piece, end);
         this.nextTurn();
+    }
+
+    @NotNull
+    public Piece removePiece(Vector2 position) {
+        Piece target = this.getPieceAtPosition(position);
+        if(target == null) throw new IllegalArgumentException("Tried to remove piece at " + position + ", but nothing was there.");
+
+        this.pieces.remove(target);
+        this.board[position.getY()][position.getX()] = null;
+        return target;
+    }
+
+    @NotNull
+    public Vector2 removePiece(Piece target) {
+        Vector2 position = this.getPosition(target);
+        if(target == null) throw new IllegalArgumentException("Tried to remove piece at " + position + ", but nothing was there.");
+
+        this.pieces.remove(target);
+        this.board[position.getY()][position.getX()] = null;
+        return position;
+    }
+
+    public boolean isCastleWhiteKing() {
+        return this.castleWhiteKing;
+    }
+
+    public boolean isCastleWhiteQueen() {
+        return this.castleWhiteQueen;
+    }
+
+    public boolean isCastleBlackKing() {
+        return this.castleBlackKing;
+    }
+
+    public boolean isCastleBlackQueen() {
+        return this.castleBlackQueen;
+    }
+
+    @Nullable
+    public Vector2 getEnPassantPosition() {
+        return this.enPassantPosition;
+    }
+
+    public void setEnPassantPosition(@Nullable Vector2 position) {
+        this.enPassantPosition = position;
     }
 }

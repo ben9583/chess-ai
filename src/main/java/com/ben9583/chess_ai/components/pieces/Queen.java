@@ -30,4 +30,7 @@ public class Queen extends DirectionalPiece {
     protected Vector2[] getRelativeSquares() {
         return Queen.relativeSquares;
     }
+
+    @Override
+    protected void pieceMoved(Vector2 position) {}
 }
