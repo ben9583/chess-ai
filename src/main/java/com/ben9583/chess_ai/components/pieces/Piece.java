@@ -19,4 +19,8 @@ public abstract class Piece {
     public abstract int getValue();
 
     public abstract Vector2[] getMovableSquares();
+
+    public Player getPlayer() {
+        return this.player;
+    }
 }
