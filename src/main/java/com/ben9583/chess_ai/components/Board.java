@@ -128,7 +128,7 @@ public class Board {
     @NotNull
     public Vector2 removePiece(Piece target) {
         Vector2 position = this.getPosition(target);
-        
+
         this.pieces.remove(target);
         this.board[position.getY()][position.getX()] = null;
         return position;
