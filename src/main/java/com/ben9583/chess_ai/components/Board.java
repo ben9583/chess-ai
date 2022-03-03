@@ -12,14 +12,20 @@ public class Board {
 
     private final Piece[][] board;
     private final Map<Piece, Vector2> pieces;
+
     private Player whoseTurn;
+
     private boolean castleWhiteKing;
     private boolean castleWhiteQueen;
     private boolean castleBlackKing;
     private boolean castleBlackQueen;
+
     private Vector2 enPassantPosition = null;
+
     private int halfMoveClock = 0;
     private int fullMoveNumber = 0;
+
+    private Vector2 clicked = null;
 
     public Board() {
         this.board = new Piece[][]{
@@ -215,5 +221,13 @@ public class Board {
 
     public void resetHalfMoveClock() {
         this.halfMoveClock = 0;
+    }
+
+    public Vector2 getClicked() {
+        return this.clicked;
+    }
+
+    public void setClicked(Vector2 square) {
+        this.clicked = square;
     }
 }
