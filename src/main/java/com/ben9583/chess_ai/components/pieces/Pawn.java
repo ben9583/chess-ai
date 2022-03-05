@@ -44,7 +44,7 @@ public class Pawn extends Piece {
         List<Vector2> positionsToConsider = new ArrayList<>();
 
         if(super.isValidTarget(moveToConsider, considerChecks) && super.getBoard().getPieceAtPosition(moveToConsider) == null) positionsToConsider.add(moveToConsider);
-        if(((super.getPlayer().equals(Player.WHITE) && super.getPosition().getY() == 1) || (super.getPlayer().equals(Player.BLACK) && super.getPosition().getY() == 6)) && super.isValidTarget(firstMoveToConsider, considerChecks && super.getBoard().getPieceAtPosition(firstMoveToConsider) == null))
+        if((((super.getPlayer().equals(Player.WHITE) && super.getPosition().getY() == 1) || (super.getPlayer().equals(Player.BLACK) && super.getPosition().getY() == 6))) && super.isValidTarget(firstMoveToConsider, considerChecks) && super.getBoard().getPieceAtPosition(firstMoveToConsider) == null)
             positionsToConsider.add(firstMoveToConsider);
 
         for(Vector2 attack : attacksToConsider) {
@@ -78,6 +78,10 @@ public class Pawn extends Piece {
             }
         } else {
             super.getBoard().setEnPassantPosition(null);
+        }
+
+        if(position.getY() == 7 || position.getY() == 0) {
+            super.getBoard().awaitPromotion(position);
         }
 
         super.getBoard().resetHalfMoveClock();

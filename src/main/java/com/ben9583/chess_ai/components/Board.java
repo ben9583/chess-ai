@@ -21,6 +21,8 @@ public class Board {
     private boolean castleBlackKing;
     private boolean castleBlackQueen;
 
+    private Vector2 awaitPromotion = null;
+
     private Vector2 enPassantPosition = null;
 
     private int halfMoveClock = 0;
@@ -101,8 +103,6 @@ public class Board {
 
         if(this.isCheckmate(this.whoseTurn)) System.out.println("Checkmate! " + (this.whoseTurn.equals(Player.WHITE) ? "Black" : "White") + " wins.");
         if(this.halfMoveClock == 50) System.out.println("Draw by 50-move rule.");
-
-        System.out.println(this.enPassantPosition);
     }
 
     public void movePiece(Piece piece, Vector2 end) {
@@ -115,7 +115,7 @@ public class Board {
             this.disableMovementThisTurn = false;
         }
 
-        this.nextTurn();
+        if(this.awaitPromotion == null) this.nextTurn();
     }
 
     @NotNull
@@ -131,7 +131,6 @@ public class Board {
     public void placePiece(@NotNull Piece piece, Vector2 position) {
         if(this.getPieceAtPosition(position) != null) throw new IllegalArgumentException("Tried to insert " + piece + " at " + position + ", but " + this.getPieceAtPosition(position) + " was already there.");
         this.board[position.getY()][position.getX()] = piece;
-        System.out.println(this.board[position.getY()][position.getX()]);
         this.pieces.put(piece, position);
     }
 
@@ -280,6 +279,34 @@ public class Board {
         this.placePiece(rook, rookToWhere);
 
         this.disableMovementThisTurn = true;
+    }
+
+    public void awaitPromotion(Vector2 square) {
+        this.awaitPromotion = square;
+    }
+
+    public boolean awaitingPromotion() {
+        return this.awaitPromotion != null;
+    }
+
+    public void promote(String piece) {
+        if(this.awaitPromotion == null) throw new IllegalStateException("Tried to promote to a " + piece + ", but there's nothing to promote.");
+
+        this.removePiece(this.getPieceAtPosition(this.awaitPromotion));
+
+        Piece p;
+        switch(piece) {
+            case "Knight" -> p = new Knight(this.whoseTurn, this);
+            case "Bishop" -> p = new Bishop(this.whoseTurn, this);
+            case "Rook" -> p = new Rook(this.whoseTurn, this);
+            case "Queen" -> p = new Queen(this.whoseTurn, this);
+            default -> throw new IllegalArgumentException("There's no piece called '" + piece + "'.");
+        }
+
+        this.placePiece(p, this.awaitPromotion);
+        this.awaitPromotion = null;
+
+        this.nextTurn();
     }
 
     @Nullable

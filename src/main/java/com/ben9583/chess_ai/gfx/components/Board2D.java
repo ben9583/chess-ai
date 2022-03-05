@@ -1,6 +1,7 @@
 package com.ben9583.chess_ai.gfx.components;
 
 import com.ben9583.chess_ai.components.Board;
+import com.ben9583.chess_ai.components.Player;
 import com.ben9583.chess_ai.components.pieces.Piece;
 import com.ben9583.chess_ai.utils.Vector2;
 
@@ -21,11 +22,12 @@ public class Board2D extends JComponent {
     public final int ROWS;
 
     private final Board board;
-    private final Map<Piece, BufferedImage> images;
+    private final Map<String, BufferedImage> images;
+    private boolean promotionPrompt = false;
 
     private Piece clickedPiece = null;
-    private final java.util.List<Vector2> squarePositions = new ArrayList<Vector2>();
-    private final java.util.List<Vector2> circlePositions = new ArrayList<Vector2>();
+    private final java.util.List<Vector2> squarePositions = new ArrayList<>();
+    private final java.util.List<Vector2> circlePositions = new ArrayList<>();
 
     public static final int X_OFFSET = 200;
     public static final int Y_OFFSET = 75;
@@ -54,12 +56,36 @@ public class Board2D extends JComponent {
             Vector2 coords = new Vector2(e.getX(), e.getY());
             Vector2 square = screenCoordsToSquare(coords);
 
-            if(clickedPiece != null && squarePositions.contains(square) && clickedPiece.getPlayer().equals(board.getWhoseTurn())) {
+            if(!promotionPrompt && clickedPiece != null && squarePositions.contains(square) && clickedPiece.getPlayer().equals(board.getWhoseTurn())) {
                 clickedPiece.movePiece(square);
                 board.setClicked(null);
-            } else {
+            } else if(promotionPrompt && square.getX() == COLUMNS + 1) {
+                switch (square.getY()) {
+                    case 7 -> {
+                        board.promote("Knight");
+                        promotionPrompt = false;
+                    }
+                    case 6 -> {
+                        board.promote("Bishop");
+                        promotionPrompt = false;
+                    }
+                    case 5 -> {
+                        board.promote("Rook");
+                        promotionPrompt = false;
+                    }
+                    case 4 -> {
+                        board.promote("Queen");
+                        promotionPrompt = false;
+                    }
+                }
+            } else if(!promotionPrompt) {
                 board.setClicked(square);
             }
+
+            if(board.awaitingPromotion()) {
+                promotionPrompt = true;
+            }
+
             clickedPiece = null;
             squarePositions.clear();
             circlePositions.clear();
@@ -81,9 +107,9 @@ public class Board2D extends JComponent {
                 Piece p = this.board.getPieceAtPosition(new Vector2(j, i));
                 if(p != null) {
                     try {
-                        this.images.put(p, ImageIO.read(new File(p.getIconPath())));
+                        this.images.put(p.toString(), ImageIO.read(new File(p.getIconPath())));
                     } catch(IOException e) {
-                        this.images.put(p, null);
+                        this.images.put(p.toString(), null);
                     }
                 }
             }
@@ -115,7 +141,7 @@ public class Board2D extends JComponent {
                 g2.fillRect(screenPos.getX(), screenPos.getY(), SQUARE_WIDTH, SQUARE_HEIGHT);
 
                 if(piece != null) {
-                    BufferedImage img = this.images.get(piece);
+                    BufferedImage img = this.images.get(piece.toString());
                     g2.drawImage(img, screenPos.getX(), screenPos.getY(), null);
                     if(thisPieceClicked && !piece.equals(this.clickedPiece) && piece.getPlayer().equals(this.board.getWhoseTurn())) {
                         this.clickedPiece = piece;
@@ -137,6 +163,30 @@ public class Board2D extends JComponent {
             for(Vector2 coords : this.circlePositions) {
                 g2.fillOval(coords.getX() + Board2D.SQUARE_WIDTH / 2 - 15, coords.getY() + Board2D.SQUARE_HEIGHT / 2 - 15, 30, 30);
             }
+        }
+
+        if(promotionPrompt) {
+            String whoseTurn = this.board.getWhoseTurn().equals(Player.WHITE) ? "White" : "Black";
+            int x = X_OFFSET + SQUARE_WIDTH * (this.COLUMNS + 1);
+            int y = Y_OFFSET;
+            g2.setColor(Board2D.DARK_COLOR);
+            g2.fillRect(x, y, SQUARE_WIDTH, SQUARE_HEIGHT);
+            g2.drawImage(images.get(whoseTurn + "Knight"), x, y, null);
+
+            y += SQUARE_HEIGHT;
+            g2.setColor(Board2D.LIGHT_COLOR);
+            g2.fillRect(x, y, SQUARE_WIDTH, SQUARE_HEIGHT);
+            g2.drawImage(images.get(whoseTurn + "Bishop"), x, y, null);
+
+            y += SQUARE_HEIGHT;
+            g2.setColor(Board2D.DARK_COLOR);
+            g2.fillRect(x, y, SQUARE_WIDTH, SQUARE_HEIGHT);
+            g2.drawImage(images.get(whoseTurn + "Rook"), x, y, null);
+
+            y += SQUARE_HEIGHT;
+            g2.setColor(Board2D.LIGHT_COLOR);
+            g2.fillRect(x, y, SQUARE_WIDTH, SQUARE_HEIGHT);
+            g2.drawImage(images.get(whoseTurn + "Queen"), x, y, null);
         }
     }
 }
