@@ -51,6 +51,7 @@ public class Vector2 {
 
     @Override
     public boolean equals(Object o) {
+        if(o == null) return false;
         if(!(o instanceof Vector2 v)) throw new ClassCastException("Object " + o + " is not of type Vector2.");
         return this.getX() == v.getX() && this.getY() == v.getY();
     }
