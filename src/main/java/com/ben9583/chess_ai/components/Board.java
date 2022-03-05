@@ -31,6 +31,8 @@ public class Board {
     private final Map<String, Integer> reachedPositions = new HashMap<>();
     private int fullMoveNumber = 0;
 
+    private boolean gameOver = false;
+
     private boolean disableMovementThisTurn = false;
 
     private Vector2 clicked = null;
@@ -124,8 +126,14 @@ public class Board {
         }
         this.halfMoveClock++;
 
-        if(this.isCheckmate(this.whoseTurn)) System.out.println("Checkmate! " + (this.whoseTurn.equals(Player.WHITE) ? "Black" : "White") + " wins.");
-        if(this.halfMoveClock == 50) System.out.println("Draw by 50-move rule.");
+        if(this.isCheckmate(this.whoseTurn)) {
+            System.out.println("Checkmate! " + (this.whoseTurn.equals(Player.WHITE) ? "Black" : "White") + " wins.");
+            this.gameOver = true;
+        }
+        if(this.halfMoveClock == 50) {
+            System.out.println("Draw by 50-move rule.");
+            this.gameOver = true;
+        }
     }
 
     public void movePiece(Piece piece, Vector2 end) {
@@ -141,7 +149,10 @@ public class Board {
         String boardHash = this.getBoardHash();
         int reachedTimes = this.reachedPositions.getOrDefault(boardHash, 0) + 1;
         this.reachedPositions.put(boardHash, reachedTimes);
-        if(reachedTimes == 3) System.out.println("Draw by threefold repetition.");
+        if(reachedTimes == 3) {
+            System.out.println("Draw by threefold repetition.");
+            this.gameOver = true;
+        }
 
         if(this.awaitPromotion == null) this.nextTurn();
     }
@@ -348,6 +359,10 @@ public class Board {
 
     public void resetHalfMoveClock() {
         this.halfMoveClock = 0;
+    }
+
+    public boolean isGameOver() {
+        return this.gameOver;
     }
 
     public Vector2 getClicked() {

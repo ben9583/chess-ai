@@ -53,6 +53,8 @@ public class Board2D extends JComponent {
     public class ChessAIMouseListener extends MouseAdapter {
         @Override
         public void mousePressed(MouseEvent e) {
+            if(board.isGameOver()) return;
+
             Vector2 coords = new Vector2(e.getX(), e.getY());
             Vector2 square = screenCoordsToSquare(coords);
 
