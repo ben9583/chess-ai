@@ -5,6 +5,7 @@ import com.ben9583.chess_ai.utils.Vector2;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -26,6 +27,8 @@ public class Board {
     private Vector2 enPassantPosition = null;
 
     private int halfMoveClock = 0;
+
+    private final Map<String, Integer> reachedPositions = new HashMap<>();
     private int fullMoveNumber = 0;
 
     private boolean disableMovementThisTurn = false;
@@ -59,6 +62,26 @@ public class Board {
         this.castleWhiteQueen = true;
         this.castleBlackKing = true;
         this.castleBlackQueen = true;
+    }
+
+    private String getBoardHash() {
+        /*
+        From Wikipedia:
+
+        Two positions are by definition "the same" if the same types of pieces occupy the same squares,
+        the same player has the move, the remaining castling rights are the same and
+        the possibility to capture en passant is the same.
+        */
+
+        return (
+            Arrays.deepHashCode(this.board) +
+            this.whoseTurn.toString() +
+            this.castleWhiteKing +
+            this.castleWhiteQueen +
+            this.castleBlackKing +
+            this.castleBlackQueen +
+            this.enPassantPosition
+        );
     }
 
     public boolean boardExistsAt(Vector2 location) {
@@ -114,6 +137,11 @@ public class Board {
         } else {
             this.disableMovementThisTurn = false;
         }
+
+        String boardHash = this.getBoardHash();
+        int reachedTimes = this.reachedPositions.getOrDefault(boardHash, 0) + 1;
+        this.reachedPositions.put(boardHash, reachedTimes);
+        if(reachedTimes == 3) System.out.println("Draw by threefold repetition.");
 
         if(this.awaitPromotion == null) this.nextTurn();
     }
