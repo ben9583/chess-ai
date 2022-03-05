@@ -6,6 +6,7 @@ import com.ben9583.chess_ai.utils.Vector2;
 import org.jetbrains.annotations.NotNull;
 
 public class Knight extends PositionalPiece {
+    /* The knight can move anywhere that is two squares away in one dimension and one square away in another. */
     private static final Vector2[] relativeSquares = {
             new Vector2(1, 2),
             new Vector2(2, 1),

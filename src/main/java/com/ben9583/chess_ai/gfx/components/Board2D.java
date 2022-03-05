@@ -17,39 +17,82 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Graphical component of the board. This class is only present
+ * when ChessAI.graphicsEnabled is true, i.e., when the flag
+ * '--graphics-enabled' is passed into the main method.
+ *
+ * Does not perform any of the functionality of the chess game
+ * but instead an interface for the user to make moves and
+ * play the game.
+ */
 public class Board2D extends JComponent {
+    /* Number of columns the board has. */
     public final int COLUMNS;
+    /* Number of rows the board has. */
     public final int ROWS;
 
+    /* The chess board corresponding to this GUI. */
     private final Board board;
+    /*
+    * Map that connects a piece (given by its name) to an image.
+    * Exists so that we only have to load each image once.
+    */
     private final Map<String, BufferedImage> images;
+    /* Whether to display the promotion UI. */
     private boolean promotionPrompt = false;
 
+    /* Piece that the user last clicked. */
     private Piece clickedPiece = null;
+    /* List of squares the clickedPiece can move. */
     private final java.util.List<Vector2> squarePositions = new ArrayList<>();
+    /* List of coordinates where we should draw the possible move circles. */
     private final java.util.List<Vector2> circlePositions = new ArrayList<>();
 
+    /* x-offset for the board. */
     public static final int X_OFFSET = 200;
+    /* y-offset for the board */
     public static final int Y_OFFSET = 75;
+    /* Width of the square. */
     public static final int SQUARE_WIDTH = 100;
+    /* Height of the square. */
     public static final int SQUARE_HEIGHT = 100;
 
+    /* Color corresponding to the dark squares. */
     public static final Color DARK_COLOR = new Color(119, 73, 44);
+    /* Color corresponding to the light squares. */
     public static final Color LIGHT_COLOR = new Color(190, 157, 119);
+    /* Color corresponding to the dark squares when clicked. */
     public static final Color DARK_RED_COLOR = new Color(119, 44, 44);
+    /* Color corresponding to the light squares when clicked. */
     public static final Color LIGHT_RED_COLOR = new Color(190, 119, 119);
+    /* Array of colors to make math easier (access the i % 2 color for each square). */
     private static final Color[] COLORS = { Board2D.DARK_COLOR, Board2D.LIGHT_COLOR, Board2D.DARK_RED_COLOR, Board2D.LIGHT_RED_COLOR };
 
+    /* Color corresponding to the circle that shows a possible move. */
     private static final Color GRAY = new Color(75, 75, 75, 89);
 
+    /**
+     * Converts pixel coordinates to square positions on the board.
+     * @param coords Pixel coordinates
+     * @return Position on the board
+     */
     public Vector2 screenCoordsToSquare(Vector2 coords) {
         return new Vector2((coords.getX() - X_OFFSET)/SQUARE_WIDTH, -((coords.getY() - Y_OFFSET)/SQUARE_HEIGHT + 1 - this.COLUMNS));
     }
 
+    /**
+     * Converts a square position on the board to the pixel coordinates where it is drawn.
+     * @param square Position on the board
+     * @return Pixel coordinates
+     */
     public Vector2 squareToScreenCoords(Vector2 square) {
         return new Vector2((square.getX() * SQUARE_WIDTH) + X_OFFSET, ((this.COLUMNS - square.getY() - 1) * SQUARE_HEIGHT) + Y_OFFSET);
     }
 
+    /**
+     * Helper class that provides listening for mouse clicks.
+     */
     public class ChessAIMouseListener extends MouseAdapter {
         @Override
         public void mousePressed(MouseEvent e) {
@@ -95,6 +138,12 @@ public class Board2D extends JComponent {
         }
     }
 
+    /**
+     * Constructs a graphical interface from a chess board.
+     * @param columns Number of columns to draw
+     * @param rows Number of rows to draw
+     * @param board The chess board this UI element will interface with.
+     */
     public Board2D(int columns, int rows, Board board) {
         super();
 

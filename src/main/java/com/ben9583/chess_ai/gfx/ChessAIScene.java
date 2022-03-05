@@ -6,8 +6,14 @@ import com.ben9583.chess_ai.gfx.components.Board2D;
 import javax.swing.*;
 import java.awt.*;
 
+/*
+Main component class belonging to the window of this game.
+Contains the GUI for the board.
+ */
 public class ChessAIScene extends JComponent {
+    /* The graphical interface of the board. */
     public final Board2D board2d;
+
     public ChessAIScene(Board board) {
         super();
 

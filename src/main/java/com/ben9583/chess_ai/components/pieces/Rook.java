@@ -6,6 +6,7 @@ import com.ben9583.chess_ai.utils.Vector2;
 import org.jetbrains.annotations.NotNull;
 
 public class Rook extends DirectionalPiece {
+    /* The rook can move vertically or horizontally. */
     private static final Vector2[] relativeSquares = {
             Vector2.NORTH,
             Vector2.EAST,
@@ -13,6 +14,7 @@ public class Rook extends DirectionalPiece {
             Vector2.WEST
     };
 
+    /* Whether this rook has moved at all. Used to check castling. */
     private boolean hasMoved = false;
 
     public Rook(@NotNull Player player, @NotNull Board board) {

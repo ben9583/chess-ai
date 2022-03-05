@@ -4,8 +4,13 @@ import com.ben9583.chess_ai.components.Board;
 
 import javax.swing.*;
 
+/*
+Class used to display the game should graphics be enabled.
+ */
 public class ChessAIWindow {
+    /* The graphical window holding the game. */
     private final JFrame frame;
+    /* The principal component of the window. */
     private final ChessAIScene scene;
 
     public ChessAIWindow(Board board) {
@@ -23,9 +28,5 @@ public class ChessAIWindow {
         this.frame.revalidate();
         this.frame.repaint();
         this.frame.setVisible(true);
-    }
-
-    public ChessAIScene getScene() {
-        return this.scene;
     }
 }

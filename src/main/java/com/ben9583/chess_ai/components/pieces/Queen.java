@@ -6,6 +6,7 @@ import com.ben9583.chess_ai.utils.Vector2;
 import org.jetbrains.annotations.NotNull;
 
 public class Queen extends DirectionalPiece {
+    /* The queen can move in any direction. */
     private static final Vector2[] relativeSquares = {
             Vector2.NORTH,
             Vector2.NORTHEAST,

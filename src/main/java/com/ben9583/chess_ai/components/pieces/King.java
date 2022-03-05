@@ -9,6 +9,7 @@ import java.util.*;
 import java.util.stream.*;
 
 public class King extends PositionalPiece {
+    /* Functions that should be run when castling. For the purposes of checking if castling is legal. */
     private final Stream<Runnable> castleWhiteKingSideRunnables = Stream.of(() -> getBoard().castleWhiteKing(King.this));
     private final Stream<Runnable> castleWhiteQueenSideRunnables = Stream.of(() -> getBoard().castleWhiteQueen(King.this));
     private final Stream<Runnable> castleBlackKingSideRunnables = Stream.of(() -> getBoard().castleBlackKing(King.this));
@@ -18,6 +19,7 @@ public class King extends PositionalPiece {
     private final Stream<Runnable> uncastleBlackKingSideRunnables = Stream.of(() -> getBoard().uncastleBlackKing(King.this));
     private final Stream<Runnable> uncastleBlackQueenSideRunnables = Stream.of(() -> getBoard().uncastleBlackQueen(King.this));
 
+    /* Functions that should be run to undo the state changes when castling. */
     private final Stream<Runnable> disableCastleWhiteKingSideRunnables = Stream.of(() -> getBoard().disableCastleWhiteKing());
     private final Stream<Runnable> disableCastleWhiteQueenSideRunnables = Stream.of(() -> getBoard().disableCastleWhiteQueen());
     private final Stream<Runnable> disableCastleBlackKingSideRunnables = Stream.of(() -> getBoard().disableCastleBlackKing());
@@ -27,6 +29,7 @@ public class King extends PositionalPiece {
     private final Stream<Runnable> enableCastleBlackKingSideRunnables = Stream.of(() -> getBoard().enableCastleBlackKing());
     private final Stream<Runnable> enableCastleBlackQueenSideRunnables = Stream.of(() -> getBoard().enableCastleBlackQueen());
 
+    /* The king can move to any of its neighboring squares. */
     private static final Vector2[] relativeSquares = {
             Vector2.NORTH,
             Vector2.NORTHEAST,
@@ -38,7 +41,9 @@ public class King extends PositionalPiece {
             Vector2.NORTHWEST
     };
 
+    /* Relative position the king moves to when king-side castling. */
     private static final Vector2 kingSideCastleSquare = new Vector2(2, 0);
+    /* Relative position the king moves to when queen-side castling. */
     private static final Vector2 queenSideCastleSquare = new Vector2(-2, 0);
 
     public King(@NotNull Player player, @NotNull Board board) {

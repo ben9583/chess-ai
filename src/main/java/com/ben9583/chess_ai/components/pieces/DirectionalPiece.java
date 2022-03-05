@@ -8,9 +8,23 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Abstract class representing a directional piece.
+ * A directional piece is a piece that can move in some
+ * relative direction for an arbitrary length until it
+ * reaches another piece, in which case it is 'blocked'.
+ */
 public abstract class DirectionalPiece extends Piece {
     public DirectionalPiece(@NotNull Player player, @NotNull Board board) { super(player, board); }
 
+    /**
+     * Returns an array of directions this piece can move to.
+     * This piece will consider all squares in this direction until
+     * it is 'blocked' by a piece.
+     *
+     * See also: Cardinal directions in Vector2.
+     * @return An array of directions this piece can move to
+     */
     protected abstract Vector2[] getRelativeSquares();
 
     @Override

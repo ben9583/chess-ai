@@ -6,6 +6,7 @@ import com.ben9583.chess_ai.utils.Vector2;
 import org.jetbrains.annotations.NotNull;
 
 public class Bishop extends DirectionalPiece {
+    /* The bishop can move diagonally. */
     private static final Vector2[] relativeSquares = {
             Vector2.NORTHEAST,
             Vector2.SOUTHEAST,
