@@ -44,11 +44,11 @@ public class Pawn extends Piece {
         List<Vector2> positionsToConsider = new ArrayList<>();
 
         if(super.isValidTarget(moveToConsider, considerChecks) && super.getBoard().getPieceAtPosition(moveToConsider) == null) positionsToConsider.add(moveToConsider);
-        if(super.isValidTarget(firstMoveToConsider, considerChecks && super.getBoard().getPieceAtPosition(firstMoveToConsider) == null) && ((super.getPlayer().equals(Player.WHITE) && super.getPosition().getY() == 1) || (super.getPlayer().equals(Player.BLACK) && super.getPosition().getY() == 6)))
+        if(((super.getPlayer().equals(Player.WHITE) && super.getPosition().getY() == 1) || (super.getPlayer().equals(Player.BLACK) && super.getPosition().getY() == 6)) && super.isValidTarget(firstMoveToConsider, considerChecks && super.getBoard().getPieceAtPosition(firstMoveToConsider) == null))
             positionsToConsider.add(firstMoveToConsider);
 
         for(Vector2 attack : attacksToConsider) {
-            if(super.isValidTarget(attack, considerChecks) && super.getBoard().getPieceAtPosition(attack) != null) {
+            if(super.isValidTarget(attack, considerChecks)) {
                 Piece target = super.getBoard().getPieceAtPosition(attack);
                 Vector2 enPassantPosition = super.getBoard().getEnPassantPosition();
                 if (attack.equals(enPassantPosition) || (target != null && target.getPlayer() != super.getPlayer()))

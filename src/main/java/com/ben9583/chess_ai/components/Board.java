@@ -101,6 +101,8 @@ public class Board {
 
         if(this.isCheckmate(this.whoseTurn)) System.out.println("Checkmate! " + (this.whoseTurn.equals(Player.WHITE) ? "Black" : "White") + " wins.");
         if(this.halfMoveClock == 50) System.out.println("Draw by 50-move rule.");
+
+        System.out.println(this.enPassantPosition);
     }
 
     public void movePiece(Piece piece, Vector2 end) {
@@ -184,7 +186,6 @@ public class Board {
         for(Piece p : this.pieces.keySet().toArray(new Piece[0])) {
             if(p.getPlayer().equals(player)) {
                 Vector2[] movableSquares = p.getMovableSquares(true);
-                System.out.println(p + "    " + movableSquares.length);
                 if(movableSquares.length > 0) return false;
             }
         }
