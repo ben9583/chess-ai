@@ -12,10 +12,11 @@ public abstract class PositionalPiece extends Piece {
 
     protected abstract Vector2[] getRelativeSquares();
 
-    public Vector2[] getMovableSquares() {
+    @Override
+    public Vector2[] getMovableSquares(boolean considerChecks) {
         return Arrays.stream(this.getRelativeSquares())
                 .map(super.getPosition()::add)
-                .filter(super::isValidTarget)
+                .filter((Vector2 pos) -> super.isValidTarget(pos, considerChecks))
                 .toArray(Vector2[]::new);
     }
 }

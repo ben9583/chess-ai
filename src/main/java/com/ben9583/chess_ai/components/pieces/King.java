@@ -5,11 +5,28 @@ import com.ben9583.chess_ai.components.Player;
 import com.ben9583.chess_ai.utils.Vector2;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
+import java.util.stream.*;
 
 public class King extends PositionalPiece {
+    private final Stream<Runnable> castleWhiteKingSideRunnables = Stream.of(() -> getBoard().castleWhiteKing(King.this));
+    private final Stream<Runnable> castleWhiteQueenSideRunnables = Stream.of(() -> getBoard().castleWhiteQueen(King.this));
+    private final Stream<Runnable> castleBlackKingSideRunnables = Stream.of(() -> getBoard().castleBlackKing(King.this));
+    private final Stream<Runnable> castleBlackQueenSideRunnables = Stream.of(() -> getBoard().castleBlackQueen(King.this));
+    private final Stream<Runnable> uncastleWhiteKingSideRunnables = Stream.of(() -> getBoard().uncastleWhiteKing(King.this));
+    private final Stream<Runnable> uncastleWhiteQueenSideRunnables = Stream.of(() -> getBoard().uncastleWhiteQueen(King.this));
+    private final Stream<Runnable> uncastleBlackKingSideRunnables = Stream.of(() -> getBoard().uncastleBlackKing(King.this));
+    private final Stream<Runnable> uncastleBlackQueenSideRunnables = Stream.of(() -> getBoard().uncastleBlackQueen(King.this));
+
+    private final Stream<Runnable> disableCastleWhiteKingSideRunnables = Stream.of(() -> getBoard().disableCastleWhiteKing());
+    private final Stream<Runnable> disableCastleWhiteQueenSideRunnables = Stream.of(() -> getBoard().disableCastleWhiteQueen());
+    private final Stream<Runnable> disableCastleBlackKingSideRunnables = Stream.of(() -> getBoard().disableCastleBlackKing());
+    private final Stream<Runnable> disableCastleBlackQueenSideRunnables = Stream.of(() -> getBoard().disableCastleBlackQueen());
+    private final Stream<Runnable> enableCastleWhiteKingSideRunnables = Stream.of(() -> getBoard().enableCastleWhiteKing());
+    private final Stream<Runnable> enableCastleWhiteQueenSideRunnables = Stream.of(() -> getBoard().enableCastleWhiteQueen());
+    private final Stream<Runnable> enableCastleBlackKingSideRunnables = Stream.of(() -> getBoard().enableCastleBlackKing());
+    private final Stream<Runnable> enableCastleBlackQueenSideRunnables = Stream.of(() -> getBoard().enableCastleBlackQueen());
+
     private static final Vector2[] relativeSquares = {
             Vector2.NORTH,
             Vector2.NORTHEAST,
@@ -43,37 +60,50 @@ public class King extends PositionalPiece {
 
     @Override
     protected Vector2[] getRelativeSquares() {
+
         List<Vector2> out = new ArrayList<>(Arrays.asList(King.relativeSquares));
 
         if(super.getPlayer().equals(Player.WHITE)) {
-            if(super.getBoard().isCastleWhiteKing() && out.contains(Vector2.EAST) && super.isValidTarget(kingSideCastleSquare)) {
+            if(super.getBoard().canCastleWhiteKing() && !super.getBoard().isInCheck(super.getPlayer()) && super.isValidTarget(super.getPosition().add(Vector2.EAST), false, disableCastleWhiteKingSideRunnables, enableCastleWhiteKingSideRunnables) && super.isValidTarget(super.getPosition().add(kingSideCastleSquare), false, castleWhiteKingSideRunnables, uncastleWhiteKingSideRunnables)) {
                 out.add(kingSideCastleSquare);
             }
-            if(super.getBoard().isCastleWhiteQueen() && out.contains(Vector2.WEST) && super.isValidTarget(queenSideCastleSquare)) {
+            if(super.getBoard().canCastleWhiteQueen() && !super.getBoard().isInCheck(super.getPlayer()) && super.isValidTarget(super.getPosition().add(Vector2.WEST), false, disableCastleWhiteQueenSideRunnables, enableCastleWhiteQueenSideRunnables) && super.isValidTarget(super.getPosition().add(queenSideCastleSquare), false, castleWhiteQueenSideRunnables, uncastleWhiteQueenSideRunnables)) {
                 out.add(queenSideCastleSquare);
             }
         } else {
-            if(super.getBoard().isCastleBlackKing() && out.contains(Vector2.EAST) && super.isValidTarget(kingSideCastleSquare)) {
+            if(super.getBoard().canCastleBlackKing() && !super.getBoard().isInCheck(super.getPlayer()) && super.isValidTarget(super.getPosition().add(Vector2.EAST), false, disableCastleBlackKingSideRunnables, enableCastleBlackKingSideRunnables) && super.isValidTarget(super.getPosition().add(kingSideCastleSquare), false, castleBlackKingSideRunnables, uncastleBlackKingSideRunnables)) {
                 out.add(kingSideCastleSquare);
             }
-            if(super.getBoard().isCastleBlackQueen() && out.contains(Vector2.WEST) && super.isValidTarget(queenSideCastleSquare)) {
+            if(super.getBoard().canCastleBlackQueen() && !super.getBoard().isInCheck(super.getPlayer()) && super.isValidTarget(super.getPosition().add(Vector2.WEST), false, disableCastleBlackQueenSideRunnables, enableCastleBlackQueenSideRunnables) && super.isValidTarget(super.getPosition().add(queenSideCastleSquare), false, castleBlackQueenSideRunnables, uncastleBlackQueenSideRunnables)) {
                 out.add(queenSideCastleSquare);
+
             }
         }
 
-        return King.relativeSquares;
+        return out.toArray(new Vector2[0]);
     }
 
     @Override
     protected void pieceMoved(Vector2 position) {
-        if(Math.abs(super.getPosition().getX() - position.getX()) == 2) {
-            if(super.getPlayer().equals(Player.WHITE)) {
-                super.getBoard().disableCastleWhiteKing();
-                super.getBoard().disableCastleWhiteQueen();
-            } else {
-                super.getBoard().disableCastleBlackKing();
-                super.getBoard().disableCastleBlackQueen();
+
+        int dx = position.sub(super.getPosition()).getX();
+        if(super.getPlayer().equals(Player.WHITE)) {
+            if(dx == 2) {
+                castleWhiteKingSideRunnables.forEach(Runnable::run);
+            } else if(dx == -2) {
+                castleWhiteQueenSideRunnables.forEach(Runnable::run);
             }
+            super.getBoard().disableCastleWhiteKing();
+            super.getBoard().disableCastleWhiteQueen();
+        } else {
+            if(dx == 2) {
+                castleBlackKingSideRunnables.forEach(Runnable::run);
+            } else if(dx == -2) {
+                castleBlackQueenSideRunnables.forEach(Runnable::run);
+            }
+            super.getBoard().disableCastleBlackKing();
+            super.getBoard().disableCastleBlackQueen();
         }
+
     }
 }

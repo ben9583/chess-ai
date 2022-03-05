@@ -13,14 +13,16 @@ public abstract class DirectionalPiece extends Piece {
 
     protected abstract Vector2[] getRelativeSquares();
 
-    public Vector2[] getMovableSquares() {
+    @Override
+    public Vector2[] getMovableSquares(boolean considerChecks) {
         List<Vector2> possibleSquares = new ArrayList<>();
 
         Vector2 position = super.getPosition();
         for(Vector2 direction : this.getRelativeSquares()) {
             Vector2 positionToCheck = position.add(direction);
-            while(super.isValidTarget(positionToCheck)) {
-                possibleSquares.add(positionToCheck);
+            while(super.isValidTarget(positionToCheck, false)) {
+                if(!considerChecks || super.isValidTarget(positionToCheck, true)) possibleSquares.add(positionToCheck);
+                if(super.getBoard().getPieceAtPosition(positionToCheck) != null) break;
                 positionToCheck = positionToCheck.add(direction);
             }
         }

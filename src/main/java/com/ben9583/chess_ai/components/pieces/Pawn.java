@@ -27,31 +27,31 @@ public class Pawn extends Piece {
     }
 
     @Override
-    public Vector2[] getMovableSquares() {
+    public Vector2[] getMovableSquares(boolean considerChecks) {
         Vector2 moveToConsider;
         Vector2 firstMoveToConsider;
         Vector2[] attacksToConsider;
         if(super.getPlayer().equals(Player.WHITE)) {
-            moveToConsider = Vector2.NORTH;
-            firstMoveToConsider = new Vector2(0, 2);
-            attacksToConsider = new Vector2[]{ Vector2.NORTHWEST, Vector2.NORTHEAST };
+            moveToConsider = super.getPosition().add(Vector2.NORTH);
+            firstMoveToConsider = super.getPosition().add(new Vector2(0, 2));
+            attacksToConsider = new Vector2[]{ super.getPosition().add(Vector2.NORTHWEST), super.getPosition().add(Vector2.NORTHEAST) };
         } else {
-            moveToConsider = Vector2.SOUTH;
-            firstMoveToConsider = new Vector2(0, -2);
-            attacksToConsider = new Vector2[]{ Vector2.SOUTHWEST, Vector2.SOUTHEAST };
+            moveToConsider = super.getPosition().add(Vector2.SOUTH);
+            firstMoveToConsider = super.getPosition().add(new Vector2(0, -2));
+            attacksToConsider = new Vector2[]{ super.getPosition().add(Vector2.SOUTHWEST), super.getPosition().add(Vector2.SOUTHEAST) };
         }
 
         List<Vector2> positionsToConsider = new ArrayList<>();
 
-        if(super.isValidTarget(moveToConsider)) positionsToConsider.add(moveToConsider);
-        if(super.isValidTarget(firstMoveToConsider) && ((super.getPlayer().equals(Player.WHITE) && super.getPosition().getY() == 1) || (super.getPlayer().equals(Player.BLACK) && super.getPosition().getY() == 6)))
+        if(super.isValidTarget(moveToConsider, considerChecks) && super.getBoard().getPieceAtPosition(moveToConsider) == null) positionsToConsider.add(moveToConsider);
+        if(super.isValidTarget(firstMoveToConsider, considerChecks && super.getBoard().getPieceAtPosition(firstMoveToConsider) == null) && ((super.getPlayer().equals(Player.WHITE) && super.getPosition().getY() == 1) || (super.getPlayer().equals(Player.BLACK) && super.getPosition().getY() == 6)))
             positionsToConsider.add(firstMoveToConsider);
 
         for(Vector2 attack : attacksToConsider) {
-            if(super.isValidTarget(attack)) {
+            if(super.isValidTarget(attack, considerChecks) && super.getBoard().getPieceAtPosition(attack) != null) {
                 Piece target = super.getBoard().getPieceAtPosition(attack);
                 Vector2 enPassantPosition = super.getBoard().getEnPassantPosition();
-                if ((enPassantPosition != null && enPassantPosition.equals(attack)) || (target != null && target.getPlayer() != super.getPlayer()))
+                if (attack.equals(enPassantPosition) || (target != null && target.getPlayer() != super.getPlayer()))
                     positionsToConsider.add(attack);
             }
         }
@@ -62,7 +62,7 @@ public class Pawn extends Piece {
     @Override
     protected void pieceMoved(Vector2 position) {
         Vector2 enPassantPosition = super.getBoard().getEnPassantPosition();
-        if(enPassantPosition != null && enPassantPosition.equals(position)) {
+        if(position.equals(enPassantPosition)) {
             if(super.getPlayer().equals(Player.WHITE)) {
                 super.getBoard().removePiece(position.add(Vector2.SOUTH));
             } else {

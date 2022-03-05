@@ -7,6 +7,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 public class Board {
 
@@ -24,6 +25,8 @@ public class Board {
 
     private int halfMoveClock = 0;
     private int fullMoveNumber = 0;
+
+    private boolean disableMovementThisTurn = false;
 
     private Vector2 clicked = null;
 
@@ -57,7 +60,7 @@ public class Board {
     }
 
     public boolean boardExistsAt(Vector2 location) {
-        return location.getY() < this.board.length && location.getX() < this.board[location.getY()].length;
+        return location.getY() >= 0 && location.getX() >= 0 && location.getY() < this.board.length && location.getX() < this.board[location.getY()].length;
     }
 
     @Nullable
@@ -74,6 +77,7 @@ public class Board {
         this.board[start.getY()][start.getX()] = null;
 
         this.pieces.put(piece, location);
+        this.pieces.remove(pieceAtLocation);
 
         return pieceAtLocation;
     }
@@ -81,7 +85,7 @@ public class Board {
     @NotNull
     public Vector2 getPosition(Piece piece) {
         Vector2 location = this.pieces.getOrDefault(piece, null);
-        if(location == null) throw new IllegalArgumentException("Piece " + piece + " was not found in this board.");
+        if(location == null) throw new IllegalArgumentException("Piece " + piece + " was not found on the board.");
 
         return location;
     }
@@ -102,8 +106,12 @@ public class Board {
     public void movePiece(Piece piece, Vector2 end) {
         if(!piece.getPlayer().equals(this.whoseTurn)) throw new IllegalArgumentException("It's Player " + this.whoseTurn + "'s turn, but a piece that tried to move belongs to player " + piece.getPlayer() + ".");
 
-        Piece removedPiece = this.setPosition(piece, end);
-        if(removedPiece != null) this.resetHalfMoveClock();
+        if(!this.disableMovementThisTurn) {
+            Piece removedPiece = this.setPosition(piece, end);
+            if(removedPiece != null) this.resetHalfMoveClock();
+        } else {
+            this.disableMovementThisTurn = false;
+        }
 
         this.nextTurn();
     }
@@ -118,9 +126,10 @@ public class Board {
         return target;
     }
 
-    public void placePiece(Piece piece, Vector2 position) {
+    public void placePiece(@NotNull Piece piece, Vector2 position) {
         if(this.getPieceAtPosition(position) != null) throw new IllegalArgumentException("Tried to insert " + piece + " at " + position + ", but " + this.getPieceAtPosition(position) + " was already there.");
         this.board[position.getY()][position.getX()] = piece;
+        System.out.println(this.board[position.getY()][position.getX()]);
         this.pieces.put(piece, position);
     }
 
@@ -140,9 +149,9 @@ public class Board {
         else
             attacker = Player.WHITE;
 
-        for(Piece p : this.pieces.keySet()) {
-            if(p.getPlayer().equals(attacker)) {
-                Vector2[] attackingSquares = p.getMovableSquares();
+        for(Piece p : this.pieces.keySet().toArray(new Piece[0])) {
+            if(p.getPlayer().equals(attacker) && !(p instanceof King)) {
+                Vector2[] attackingSquares = p.getMovableSquares(false);
                 for(Vector2 square : attackingSquares) {
                     Piece attackedPiece = this.getPieceAtPosition(square);
                     if(attackedPiece instanceof King && attackedPiece.getPlayer().equals(target)) {
@@ -155,22 +164,27 @@ public class Board {
         return false;
     }
 
-    public boolean movePlacesInCheck(Piece movingPiece, Vector2 end) {
+    public boolean doesThisMovePutMeInCheck(Piece movingPiece, Vector2 end) {
         Vector2 start = this.getPosition(movingPiece);
+
+        assert this.getPieceAtPosition(end) == null || !this.getPieceAtPosition(end).getPlayer().equals(movingPiece.getPlayer());
         Piece attackedPiece = this.setPosition(movingPiece, end);
 
         boolean inCheck = this.isInCheck(this.whoseTurn);
 
-        this.setPosition(movingPiece, start);
-        this.placePiece(attackedPiece, end);
+        Piece thereBetterBeNothingHere = this.setPosition(movingPiece, start);
+        assert thereBetterBeNothingHere == null;
+
+        if(attackedPiece != null) this.placePiece(attackedPiece, end);
 
         return inCheck;
     }
 
     public boolean isCheckmate(Player player) {
-        for(Piece p : this.pieces.keySet()) {
+        for(Piece p : this.pieces.keySet().toArray(new Piece[0])) {
             if(p.getPlayer().equals(player)) {
-                Vector2[] movableSquares = p.getMovableSquares();
+                Vector2[] movableSquares = p.getMovableSquares(true);
+                System.out.println(p + "    " + movableSquares.length);
                 if(movableSquares.length > 0) return false;
             }
         }
@@ -178,36 +192,93 @@ public class Board {
         return true;
     }
 
-    public boolean isCastleWhiteKing() {
+    public Player getWhoseTurn() {
+        return this.whoseTurn;
+    }
+
+    public boolean canCastleWhiteKing() {
         return this.castleWhiteKing;
     }
 
-    public boolean isCastleWhiteQueen() {
+    public boolean canCastleWhiteQueen() {
         return this.castleWhiteQueen;
     }
 
-    public boolean isCastleBlackKing() {
+    public boolean canCastleBlackKing() {
         return this.castleBlackKing;
     }
 
-    public boolean isCastleBlackQueen() {
+    public boolean canCastleBlackQueen() {
         return this.castleBlackQueen;
     }
 
-    public void disableCastleWhiteKing() {
+    public void disableCastleWhiteKing() { this.castleWhiteKing = false; }
+
+    public void disableCastleWhiteQueen() { this.castleWhiteQueen = false; }
+
+    public void disableCastleBlackKing() { this.castleBlackKing = false; }
+
+    public void disableCastleBlackQueen() { this.castleBlackQueen = false; }
+
+    public void enableCastleWhiteKing() { this.castleWhiteKing = true; }
+
+    public void enableCastleWhiteQueen() { this.castleWhiteQueen = true; }
+
+    public void enableCastleBlackKing() { this.castleBlackKing = true; }
+
+    public void enableCastleBlackQueen() { this.castleBlackQueen = true; }
+
+    public void castleWhiteKing(King king) {
+        this.castle(king, king.getPosition().add(new Vector2(2, 0)), Objects.requireNonNull(this.getPieceAtPosition(king.getPosition().add(new Vector2(3, 0)))), king.getPosition().add(Vector2.EAST));
         this.castleWhiteKing = false;
     }
 
-    public void disableCastleWhiteQueen() {
+    public void castleWhiteQueen(King king) {
+        this.castle(king, king.getPosition().add(new Vector2(-2, 0)), Objects.requireNonNull(this.getPieceAtPosition(king.getPosition().add(new Vector2(-4, 0)))), king.getPosition().add(Vector2.WEST));
         this.castleWhiteQueen = false;
     }
 
-    public void disableCastleBlackKing() {
+    public void castleBlackKing(King king) {
+        this.castle(king, king.getPosition().add(new Vector2(2, 0)), Objects.requireNonNull(this.getPieceAtPosition(king.getPosition().add(new Vector2(3, 0)))), king.getPosition().add(Vector2.EAST));
         this.castleBlackKing = false;
     }
 
-    public void disableCastleBlackQueen() {
+    public void castleBlackQueen(King king) {
+        this.castle(king, king.getPosition().add(new Vector2(-2, 0)), Objects.requireNonNull(this.getPieceAtPosition(king.getPosition().add(new Vector2(-4, 0)))), king.getPosition().add(Vector2.WEST));
         this.castleBlackQueen = false;
+    }
+
+    public void uncastleWhiteKing(King king) {
+        this.castle(king, king.getPosition().add(new Vector2(-2, 0)), Objects.requireNonNull(this.getPieceAtPosition(king.getPosition().add(new Vector2(-2, 0)))), king.getPosition().add(Vector2.EAST));
+        this.castleWhiteKing = true;
+    }
+
+    public void uncastleWhiteQueen(King king) {
+        this.castle(king, king.getPosition().add(new Vector2(2, 0)), Objects.requireNonNull(this.getPieceAtPosition(king.getPosition().add(Vector2.EAST))), king.getPosition().add(new Vector2(-2, 0)));
+        this.castleWhiteQueen = true;
+    }
+
+    public void uncastleBlackKing(King king) {
+        this.castle(king, king.getPosition().add(new Vector2(-2, 0)), Objects.requireNonNull(this.getPieceAtPosition(king.getPosition().add(new Vector2(-2, 0)))), king.getPosition().add(Vector2.EAST));
+        this.castleBlackKing = true;
+    }
+
+    public void uncastleBlackQueen(King king) {
+        this.castle(king, king.getPosition().add(new Vector2(2, 0)), Objects.requireNonNull(this.getPieceAtPosition(king.getPosition().add(Vector2.EAST))), king.getPosition().add(new Vector2(-2, 0)));
+        this.castleBlackQueen = true;
+    }
+
+    private void castle(Piece king, Vector2 kingToWhere, Piece rook, Vector2 rookToWhere) {
+        assert king instanceof King;
+        assert rook instanceof Rook;
+
+        this.removePiece(king);
+        this.removePiece(rook);
+
+        this.placePiece(king, kingToWhere);
+        this.placePiece(rook, rookToWhere);
+
+        this.disableMovementThisTurn = true;
     }
 
     @Nullable

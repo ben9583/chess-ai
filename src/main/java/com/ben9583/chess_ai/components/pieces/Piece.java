@@ -5,6 +5,8 @@ import com.ben9583.chess_ai.components.Player;
 import com.ben9583.chess_ai.utils.Vector2;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.stream.Stream;
+
 public abstract class Piece {
     @NotNull
     private final Player player;
@@ -18,20 +20,31 @@ public abstract class Piece {
 
     @Override
     public String toString() {
-        return (this.player.equals(Player.WHITE) ? "White" : "Black") + super.toString();
+        return (this.player.equals(Player.WHITE) ? "White" : "Black") + this.getClass().getSimpleName();
     }
 
     public abstract int getValue();
 
     public abstract String getIconPath();
 
-    public abstract Vector2[] getMovableSquares();
+    public abstract Vector2[] getMovableSquares(boolean considerChecks);
 
-    protected boolean isValidTarget(Vector2 position) {
+    protected boolean isValidTarget(Vector2 position, boolean considerChecks) {
+        return this.isValidTarget(position, considerChecks, Stream.empty(), Stream.empty());
+    }
+
+    protected boolean isValidTarget(Vector2 position, boolean considerChecks, Stream<Runnable> onMoves, Stream<Runnable> onBacks) {
         if(!this.board.boardExistsAt(position)) return false;
 
         Piece target = this.board.getPieceAtPosition(position);
-        return (target == null || !target.getPlayer().equals(this.player)) && !this.board.movePlacesInCheck(this, position);
+        if(target != null && target.getPlayer().equals(this.player)) return false;
+        if(!considerChecks) return true;
+
+        onMoves.forEach(Runnable::run);
+        boolean result = !this.board.doesThisMovePutMeInCheck(this, position);
+        onBacks.forEach(Runnable::run);
+
+        return result;
     }
 
     public void movePiece(Vector2 position) {
