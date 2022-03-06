@@ -46,6 +46,8 @@ public class Board {
 
     /* Whether the game is over because of checkmate or stalemate. */
     private boolean gameOver = false;
+    /* Message for why the game ended. */
+    private String gameOverReason = null;
 
     /* Whether the next move should increment the turn. Used for validating checks. */
     private boolean disableMovementThisTurn = false;
@@ -182,10 +184,13 @@ public class Board {
         if(this.isCheckmate(this.whoseTurn)) {
             System.out.println("Checkmate! " + (this.whoseTurn.equals(Player.WHITE) ? "Black" : "White") + " wins.");
             this.gameOver = true;
+            this.gameOverReason = "Checkmate! " + (this.whoseTurn.equals(Player.WHITE) ? "Black" : "White") + " wins.";
+            return;
         }
         if(this.halfMoveClock == 50) {
             System.out.println("Draw by 50-move rule.");
             this.gameOver = true;
+            this.gameOverReason = "Draw by 50-move rule.";
         }
     }
 
@@ -211,6 +216,7 @@ public class Board {
         if(reachedTimes == 3) {
             System.out.println("Draw by threefold repetition.");
             this.gameOver = true;
+            this.gameOverReason = "Draw by threefold repetition.";
         }
 
         if(this.awaitPromotion == null) this.nextTurn();
@@ -583,6 +589,17 @@ public class Board {
      */
     public Vector2 getClicked() {
         return this.clicked;
+    }
+
+    /**
+     * Gets the reason the game is over.
+     * Throws an exception if the game is not over.
+     * @return The reason the game is over
+     */
+    @NotNull
+    public String getGameOverReason() {
+        if(this.gameOverReason == null) throw new IllegalStateException("Cannot get the reason the game is over because the game is not over.");
+        return this.gameOverReason;
     }
 
     /**

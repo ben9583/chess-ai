@@ -134,6 +134,7 @@ public class Board2D extends JComponent {
             clickedPiece = null;
             squarePositions.clear();
             circlePositions.clear();
+
             repaint();
         }
     }
@@ -238,6 +239,11 @@ public class Board2D extends JComponent {
             g2.setColor(Board2D.LIGHT_COLOR);
             g2.fillRect(x, y, SQUARE_WIDTH, SQUARE_HEIGHT);
             g2.drawImage(images.get(whoseTurn + "Queen"), x, y, null);
+        }
+
+        if(this.board.isGameOver()) {
+            g2.setColor(Color.WHITE);
+            g2.drawString(this.board.getGameOverReason(), X_OFFSET + SQUARE_WIDTH * (this.COLUMNS + 1), Y_OFFSET + SQUARE_HEIGHT * this.ROWS);
         }
     }
 }
