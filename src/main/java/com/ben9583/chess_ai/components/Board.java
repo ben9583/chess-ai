@@ -5,10 +5,7 @@ import com.ben9583.chess_ai.utils.Vector2;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
 public class Board {
 
@@ -17,6 +14,7 @@ public class Board {
     /* Lookup table to make finding pieces easier. */
     @NotNull
     private final Map<Piece, Vector2> pieces;
+
 
     /* Whose turn it is in the game. */
     @NotNull
@@ -204,6 +202,26 @@ public class Board {
         out.append(this.fullMoveNumber);
 
         return out.toString();
+    }
+
+    /**
+     * Returns the full set of pieces belonging to player, in no particular order.
+     * @param player Player on this board
+     * @return Pieces belonging to player
+     */
+    @NotNull
+    public Piece[] getPlayerPieces(@NotNull Player player) {
+        List<Piece> pieces = new ArrayList<>();
+
+        for(int i = 0; i < this.board.length; i++) {
+            for(int j = 0; j < this.board[i].length; j++) {
+                Piece p = this.getPieceAtPosition(new Vector2(j, i));
+                if(p != null && p.getPlayer().equals(player))
+                    pieces.add(p);
+            }
+        }
+
+        return pieces.toArray(Piece[]::new);
     }
 
     /**
