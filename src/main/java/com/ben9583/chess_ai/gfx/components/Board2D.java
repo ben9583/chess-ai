@@ -101,10 +101,12 @@ public class Board2D extends JComponent {
             Vector2 coords = new Vector2(e.getX(), e.getY());
             Vector2 square = screenCoordsToSquare(coords);
 
+            boolean moveThePiece = false;
+
             if(!promotionPrompt && clickedPiece != null && squarePositions.contains(square) && clickedPiece.getPlayer().equals(board.getWhoseTurn())) {
-                clickedPiece.movePiece(square);
                 board.setClicked(null);
                 System.out.println(board.toFEN());
+                moveThePiece = true;
             } else if(promotionPrompt && square.getX() == COLUMNS + 1) {
                 switch (square.getY()) {
                     case 7 -> {
@@ -132,9 +134,14 @@ public class Board2D extends JComponent {
                 promotionPrompt = true;
             }
 
-            clickedPiece = null;
             squarePositions.clear();
             circlePositions.clear();
+
+            if(moveThePiece) {
+                clickedPiece.movePiece(square);
+            }
+
+            clickedPiece = null;
 
             repaint();
         }

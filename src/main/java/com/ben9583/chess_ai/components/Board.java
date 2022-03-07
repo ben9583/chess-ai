@@ -53,6 +53,9 @@ public class Board {
     /* The piece the user clicked. See also: Board2D */
     private Vector2 clicked = null;
 
+    /* External function to be run when a turn has ended. */
+    private Runnable onNextTurn;
+
     /**
      * Creates a standard chess board.
      */
@@ -301,7 +304,10 @@ public class Board {
             System.out.println("Draw by 50-move rule.");
             this.gameOver = true;
             this.gameOverReason = "Draw by 50-move rule.";
+            return;
         }
+
+        this.onNextTurn.run();
     }
 
     /**
@@ -721,5 +727,9 @@ public class Board {
      */
     public void setClicked(Vector2 square) {
         this.clicked = square;
+    }
+
+    public void bindNextTurnEvent(Runnable onNextTurn) {
+        this.onNextTurn = onNextTurn;
     }
 }
