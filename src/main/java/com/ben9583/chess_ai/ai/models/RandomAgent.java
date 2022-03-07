@@ -7,6 +7,8 @@ import com.ben9583.chess_ai.components.Player;
 import com.ben9583.chess_ai.components.pieces.Piece;
 import com.ben9583.chess_ai.utils.Vector2;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 /**
@@ -29,15 +31,16 @@ public class RandomAgent extends AIAgent {
 
     @Override
     public Move getNextMove() {
+        List<Move> possibleMoves = new ArrayList<>();
         Piece[] myPieces = super.getMyPieces();
 
-        int rand = randomGenerator.nextInt(myPieces.length);
-        Piece selectedPiece = myPieces[rand];
+        for(Piece p : myPieces) {
+            Vector2[] possiblePositions = p.getMovableSquares(true);
+            for(Vector2 v : possiblePositions) {
+                possibleMoves.add(new Move(p, v));
+            }
+        }
 
-        Vector2[] movableSquares = selectedPiece.getMovableSquares(true);
-        rand = randomGenerator.nextInt(movableSquares.length);
-        Vector2 square = movableSquares[rand];
-
-        return new Move(selectedPiece, square);
+        return possibleMoves.get(randomGenerator.nextInt(possibleMoves.size()));
     }
 }
