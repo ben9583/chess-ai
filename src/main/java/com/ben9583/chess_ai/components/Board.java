@@ -312,7 +312,7 @@ public class Board {
 
     /**
      * Moves piece to end and increments the turn if necessary.
-     * Also checks for threefold reptition draws.
+     * Also checks for threefold repetition draws.
      * @param piece Piece to move
      * @param end Position to move piece to
      */
