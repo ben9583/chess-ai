@@ -27,6 +27,11 @@ public class Rook extends DirectionalPiece {
     }
 
     @Override
+    public char getFENSymbol() {
+        return 'R';
+    }
+
+    @Override
     public String getIconPath() {
         if(this.getPlayer().equals(Player.WHITE))
             return "src/main/resources/images/piece_icons/wr.png";

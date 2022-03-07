@@ -32,6 +32,11 @@ public class Bishop extends DirectionalPiece {
     }
 
     @Override
+    public char getFENSymbol() {
+        return 'B';
+    }
+
+    @Override
     protected Vector2[] getRelativeSquares() {
         return Bishop.relativeSquares;
     }

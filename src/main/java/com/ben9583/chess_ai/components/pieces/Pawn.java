@@ -19,6 +19,11 @@ public class Pawn extends Piece {
     }
 
     @Override
+    public char getFENSymbol() {
+        return 'P';
+    }
+
+    @Override
     public String getIconPath() {
         if(this.getPlayer().equals(Player.WHITE))
             return "src/main/resources/images/piece_icons/wp.png";

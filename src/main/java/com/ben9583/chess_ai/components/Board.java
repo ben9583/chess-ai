@@ -39,7 +39,7 @@ public class Board {
     /* Number of half-moves since a capture or pawn move. Draw at 50. */
     private int halfMoveClock = 0;
     /* Number of full-moves occurred since this game started. */
-    private int fullMoveNumber = 0;
+    private int fullMoveNumber = 1;
 
     /* Number of times a given position has been reached. Two positions are equal by rules of threefold repetition. */
     private final Map<String, Integer> reachedPositions = new HashMap<>();
@@ -114,6 +114,99 @@ public class Board {
     }
 
     /**
+     * Converts a Vector2 representing some location on the board
+     * to the standard chess notation of a square. For example,
+     * (4, 3) -> "e4".
+     * @param position Position on the board
+     * @return Chess notation representation of position
+     */
+    @NotNull
+    public String vector2ToSquare(@NotNull Vector2 position) {
+        if(!this.boardExistsAt(position)) throw new IllegalArgumentException("Position " + position + " does not exist on this board.");
+        return Character.toString(position.getX() + 'a') + (position.getY() + 1);
+    }
+
+    /**
+     * Converts this board to Forsyth-Edwards Notation (FEN).
+     * @return String representing this board in FEN
+     */
+    public String toFEN() {
+        StringBuilder out = new StringBuilder();
+
+        int noneCounter = 0;
+        for(int i = this.board.length - 1; i >= 0; i--) {
+            for(int j = 0; j < this.board[i].length; j++) {
+                Piece p = this.getPieceAtPosition(new Vector2(j, i));
+                if(p == null) {
+                    noneCounter++;
+                } else {
+                    if(noneCounter != 0) {
+                        out.append(noneCounter);
+                        noneCounter = 0;
+                    }
+                    if(p.getPlayer().equals(Player.WHITE)) {
+                        out.append(Character.toUpperCase(p.getFENSymbol()));
+                    } else {
+                        out.append(Character.toLowerCase(p.getFENSymbol()));
+                    }
+                }
+            }
+            if(noneCounter != 0) {
+                out.append(noneCounter);
+                noneCounter = 0;
+            }
+            out.append('/');
+        }
+
+        out.deleteCharAt(out.length() - 1); // get rid of the last '/'
+        out.append(' ');
+
+        if(this.whoseTurn.equals(Player.WHITE)) {
+            out.append('w');
+        } else {
+            out.append('b');
+        }
+
+        out.append(' ');
+
+        boolean neitherSideCanCastle = true;
+        if(this.castleWhiteKing) {
+            neitherSideCanCastle = false;
+            out.append('K');
+        }
+        if(this.castleWhiteQueen) {
+            neitherSideCanCastle = false;
+            out.append('Q');
+        }
+        if (this.castleBlackKing) {
+            neitherSideCanCastle = false;
+            out.append('k');
+        }
+        if (this.castleBlackQueen) {
+            neitherSideCanCastle = false;
+            out.append('q');
+        }
+        if(neitherSideCanCastle) {
+            out.append('-');
+        }
+
+        out.append(' ');
+
+        if(this.enPassantPosition != null) {
+            out.append(this.vector2ToSquare(this.enPassantPosition));
+        } else {
+            out.append('-');
+        }
+
+        out.append(' ');
+        out.append(this.halfMoveClock);
+        out.append(' ');
+        out.append(this.fullMoveNumber);
+
+        return out.toString();
+    }
+
+    /**
      * Returns whether there is a square at location on this board.
      * @param location A potential square this board exists at
      * @return Whether location is a square on this board
@@ -179,7 +272,6 @@ public class Board {
             this.whoseTurn = Player.WHITE;
             this.fullMoveNumber++;
         }
-        this.halfMoveClock++;
 
         if(this.isCheckmate(this.whoseTurn)) {
             System.out.println("Checkmate! " + (this.whoseTurn.equals(Player.WHITE) ? "Black" : "White") + " wins.");
@@ -218,6 +310,8 @@ public class Board {
             this.gameOver = true;
             this.gameOverReason = "Draw by threefold repetition.";
         }
+
+        if(!(piece instanceof Pawn)) this.halfMoveClock++;
 
         if(this.awaitPromotion == null) this.nextTurn();
     }

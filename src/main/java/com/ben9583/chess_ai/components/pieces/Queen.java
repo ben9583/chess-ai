@@ -28,6 +28,11 @@ public class Queen extends DirectionalPiece {
     }
 
     @Override
+    public char getFENSymbol() {
+        return 'Q';
+    }
+
+    @Override
     public String getIconPath() {
         if(this.getPlayer().equals(Player.WHITE))
             return "src/main/resources/images/piece_icons/wq.png";

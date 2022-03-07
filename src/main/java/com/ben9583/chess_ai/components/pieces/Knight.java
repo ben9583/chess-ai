@@ -36,6 +36,11 @@ public class Knight extends PositionalPiece {
     }
 
     @Override
+    public char getFENSymbol() {
+        return 'N';
+    }
+
+    @Override
     protected Vector2[] getRelativeSquares() {
         return Knight.relativeSquares;
     }

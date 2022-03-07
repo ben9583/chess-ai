@@ -40,6 +40,12 @@ public abstract class Piece {
     public abstract int getValue();
 
     /**
+     * The symbol that represents this piece in Forsyth-Edwards Notation (FEN).
+     * @return Character representing this piece in FEN
+     */
+    public abstract char getFENSymbol();
+
+    /**
      * The filepath to the image that should be used to represent this piece graphically.
      * @return Filepath to an image
      */

@@ -56,6 +56,11 @@ public class King extends PositionalPiece {
     }
 
     @Override
+    public char getFENSymbol() {
+        return 'K';
+    }
+
+    @Override
     public String getIconPath() {
         if(this.getPlayer().equals(Player.WHITE))
             return "src/main/resources/images/piece_icons/wk.png";
