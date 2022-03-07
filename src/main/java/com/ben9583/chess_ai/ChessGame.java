@@ -1,6 +1,7 @@
 package com.ben9583.chess_ai;
 
 import com.ben9583.chess_ai.ai.AIAgent;
+import com.ben9583.chess_ai.ai.models.GreedyAgent;
 import com.ben9583.chess_ai.ai.models.RandomAgent;
 import com.ben9583.chess_ai.ai.utils.Move;
 import com.ben9583.chess_ai.components.Board;
@@ -30,7 +31,7 @@ public class ChessGame {
         }
 
         this.aiPlayers = new HashMap<>();
-        this.aiPlayers.put(Player.BLACK, new RandomAgent(this.board, Player.BLACK, 9583));
+        this.aiPlayers.put(Player.BLACK, new GreedyAgent(this.board, Player.BLACK, 9583));
 
         this.board.bindNextTurnEvent(this::onNextTurn);
     }
