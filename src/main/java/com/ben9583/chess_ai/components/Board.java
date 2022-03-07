@@ -321,7 +321,18 @@ public class Board {
 
         if(!this.disableMovementThisTurn) {
             Piece removedPiece = this.setPosition(piece, end);
-            if(removedPiece != null) this.resetHalfMoveClock();
+            if(removedPiece != null) {
+                this.resetHalfMoveClock();
+                if(removedPiece instanceof Rook) {
+                    Vector2 rookPosition = this.getPosition(removedPiece);
+                    if(removedPiece.getPlayer().equals(Player.WHITE) ? rookPosition.getY() == 0 : rookPosition.getY() == 7) {
+                        if(rookPosition.getX() == 0 && removedPiece.getPlayer().equals(Player.WHITE)) this.disableCastleWhiteKing();
+                        if(rookPosition.getX() == 7 && removedPiece.getPlayer().equals(Player.BLACK)) this.disableCastleWhiteQueen();
+                        if(rookPosition.getX() == 0 && removedPiece.getPlayer().equals(Player.WHITE)) this.disableCastleBlackKing();
+                        if(rookPosition.getX() == 7 && removedPiece.getPlayer().equals(Player.BLACK)) this.disableCastleBlackQueen();
+                    }
+                }
+            }
         } else {
             this.disableMovementThisTurn = false;
         }
