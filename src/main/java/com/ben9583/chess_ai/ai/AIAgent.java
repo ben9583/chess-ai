@@ -7,7 +7,7 @@ import com.ben9583.chess_ai.components.pieces.Piece;
 
 /**
  * Abstract base class for any AI agent to play chess.
- * Defines certain methods that the Board will expect
+ * Defines certain methods that the ChessGame will expect
  * to be able to call in order to get a decision.
  */
 public abstract class AIAgent {
