@@ -311,8 +311,8 @@ public class Board {
         }
         if(this.halfMoveClock == 50) {
             //System.out.println("Draw by 50-move rule.");
-            //this.gameOver = true;
-            //this.gameOverReason = "Draw by 50-move rule.";
+            this.gameOver = true;
+            this.gameOverReason = "Draw by 50-move rule.";
             return;
         }
 
