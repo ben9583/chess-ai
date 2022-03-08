@@ -27,6 +27,20 @@ public abstract class AIAgent {
      */
     public abstract Move getNextMove();
 
+    /**
+     * Fired when player makes a move prompting a promotion.
+     * Should decide which piece to promote to.
+     * @return The piece that the pawn will promote to.
+     */
+    public abstract String promote();
+
+    /**
+     * Returns a decision by the AI if they should resign.
+     * Ends the game with this AI losing.
+     * @return Whether the AI wants to resign
+     */
+    public abstract boolean shouldResign();
+
     protected Piece[] getMyPieces() {
         return this.board.getPlayerPieces(this.player);
     }

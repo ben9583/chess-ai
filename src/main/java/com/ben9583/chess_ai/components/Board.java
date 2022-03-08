@@ -15,7 +15,6 @@ public class Board {
     @NotNull
     private final Map<Piece, Vector2> pieces;
 
-
     /* Whose turn it is in the game. */
     @NotNull
     private Player whoseTurn;
@@ -41,6 +40,9 @@ public class Board {
 
     /* Number of times a given position has been reached. Two positions are equal by rules of threefold repetition. */
     private final Map<String, Integer> reachedPositions = new HashMap<>();
+
+    /* Record of all moves made, in standard algebraic notation. */
+    private final List<String> notationMoves = new ArrayList<>();
 
     /* Whether the game is over because of checkmate or stalemate. */
     private boolean gameOver = false;
@@ -103,15 +105,14 @@ public class Board {
         the possibility to capture en passant is the same.
         */
 
-        return (
-            Arrays.deepHashCode(this.board) +
-            this.whoseTurn.toString() +
-            this.castleWhiteKing +
-            this.castleWhiteQueen +
-            this.castleBlackKing +
-            this.castleBlackQueen +
-            this.enPassantPosition
-        );
+        String[] components = this.toFEN().split(" ");
+
+        StringBuilder hash = new StringBuilder();
+        for(int i = 0; i < 4; i++) {
+            hash.append(components[i]);
+        }
+
+        return hash.toString();
     }
 
     /**
@@ -146,7 +147,7 @@ public class Board {
                         noneCounter = 0;
                     }
                     if(p.getPlayer().equals(Player.WHITE)) {
-                        out.append(Character.toUpperCase(p.getFENSymbol()));
+                        out.append(p.getFENSymbol());
                     } else {
                         out.append(Character.toLowerCase(p.getFENSymbol()));
                     }
@@ -205,6 +206,14 @@ public class Board {
         out.append(this.fullMoveNumber);
 
         return out.toString();
+    }
+
+    /**
+     * Returns the PGN of this game currently.
+     * @return PGN String of this game
+     */
+    public String getPGN() {
+        return String.join(" ", this.notationMoves);
     }
 
     /**
@@ -295,19 +304,19 @@ public class Board {
         }
 
         if(this.isCheckmate(this.whoseTurn)) {
-            System.out.println("Checkmate! " + (this.whoseTurn.equals(Player.WHITE) ? "Black" : "White") + " wins.");
+            //System.out.println("Checkmate! " + (this.whoseTurn.equals(Player.WHITE) ? "Black" : "White") + " wins.");
             this.gameOver = true;
             this.gameOverReason = "Checkmate! " + (this.whoseTurn.equals(Player.WHITE) ? "Black" : "White") + " wins.";
             return;
         }
         if(this.halfMoveClock == 50) {
-            System.out.println("Draw by 50-move rule.");
-            this.gameOver = true;
-            this.gameOverReason = "Draw by 50-move rule.";
+            //System.out.println("Draw by 50-move rule.");
+            //this.gameOver = true;
+            //this.gameOverReason = "Draw by 50-move rule.";
             return;
         }
 
-        this.onNextTurn.run();
+        if(this.onNextTurn != null) this.onNextTurn.run();
     }
 
     /**
@@ -317,19 +326,24 @@ public class Board {
      * @param end Position to move piece to
      */
     public void movePiece(@NotNull Piece piece, @NotNull Vector2 end) {
+        boolean recordThisMove = false;
+        boolean pieceCaptured = false;
+        Vector2 oldPosition = this.getPosition(piece);
+
         if(!piece.getPlayer().equals(this.whoseTurn)) throw new IllegalArgumentException("It's Player " + this.whoseTurn + "'s turn, but a piece that tried to move belongs to player " + piece.getPlayer() + ".");
 
         if(!this.disableMovementThisTurn) {
+            recordThisMove = true;
             Piece removedPiece = this.setPosition(piece, end);
             if(removedPiece != null) {
+                pieceCaptured = true;
                 this.resetHalfMoveClock();
                 if(removedPiece instanceof Rook) {
-                    Vector2 rookPosition = this.getPosition(removedPiece);
-                    if(removedPiece.getPlayer().equals(Player.WHITE) ? rookPosition.getY() == 0 : rookPosition.getY() == 7) {
-                        if(rookPosition.getX() == 0 && removedPiece.getPlayer().equals(Player.WHITE)) this.disableCastleWhiteKing();
-                        if(rookPosition.getX() == 7 && removedPiece.getPlayer().equals(Player.BLACK)) this.disableCastleWhiteQueen();
-                        if(rookPosition.getX() == 0 && removedPiece.getPlayer().equals(Player.WHITE)) this.disableCastleBlackKing();
-                        if(rookPosition.getX() == 7 && removedPiece.getPlayer().equals(Player.BLACK)) this.disableCastleBlackQueen();
+                    if(removedPiece.getPlayer().equals(Player.WHITE) ? end.getY() == 0 : end.getY() == 7) {
+                        if(end.getX() == 0 && removedPiece.getPlayer().equals(Player.WHITE)) this.disableCastleWhiteKing();
+                        if(end.getX() == 7 && removedPiece.getPlayer().equals(Player.WHITE)) this.disableCastleWhiteQueen();
+                        if(end.getX() == 0 && removedPiece.getPlayer().equals(Player.BLACK)) this.disableCastleBlackKing();
+                        if(end.getX() == 7 && removedPiece.getPlayer().equals(Player.BLACK)) this.disableCastleBlackQueen();
                     }
                 }
             }
@@ -337,18 +351,57 @@ public class Board {
             this.disableMovementThisTurn = false;
         }
 
-        String boardHash = this.getBoardHash();
-        int reachedTimes = this.reachedPositions.getOrDefault(boardHash, 0) + 1;
-        this.reachedPositions.put(boardHash, reachedTimes);
-        if(reachedTimes == 3) {
-            System.out.println("Draw by threefold repetition.");
-            this.gameOver = true;
-            this.gameOverReason = "Draw by threefold repetition.";
-        }
-
         if(!(piece instanceof Pawn)) this.halfMoveClock++;
 
-        if(this.awaitPromotion == null) this.nextTurn();
+        if(this.awaitPromotion == null) {
+            this.nextTurn();
+
+            String boardHash = this.getBoardHash();
+            int reachedTimes = this.reachedPositions.getOrDefault(boardHash, 0) + 1;
+            this.reachedPositions.put(boardHash, reachedTimes);
+
+            if(reachedTimes == 3) {
+                //System.out.println("Draw by threefold repetition.");
+                this.gameOver = true;
+                this.gameOverReason = "Draw by threefold repetition.";
+            }
+
+            if(recordThisMove) {
+                StringBuilder notationMove = new StringBuilder();
+                if(this.whoseTurn.equals(Player.BLACK)) notationMove.append(this.fullMoveNumber).append(".");
+                if (!(piece instanceof Pawn)) {
+                    notationMove.append(piece.getFENSymbol());
+                    notationMove.append(this.vector2ToSquare(oldPosition));
+                } else {
+                    if(pieceCaptured) notationMove.append(this.vector2ToSquare(oldPosition).charAt(0));
+                }
+
+                if (pieceCaptured) notationMove.append('x');
+                notationMove.append(this.vector2ToSquare(end));
+
+                if(this.isInCheck(this.whoseTurn)) {
+                    if(this.gameOverReason != null && this.gameOverReason.startsWith("Checkmate")) {
+                        notationMove.append('#');
+                    } else {
+                        notationMove.append('+');
+                    }
+                }
+
+                this.notationMoves.add(notationMove.toString());
+
+                if(this.gameOver) {
+                    if(this.gameOverReason.startsWith("Checkmate")) {
+                        if(this.whoseTurn.equals(Player.WHITE)) {
+                            this.notationMoves.add("1-0");
+                        } else {
+                            this.notationMoves.add("0-1");
+                        }
+                    } else {
+                        this.notationMoves.add("1/2-1/2");
+                    }
+                }
+            }
+        }
     }
 
     /**
@@ -401,7 +454,7 @@ public class Board {
             attacker = Player.WHITE;
 
         for(Piece p : this.pieces.keySet().toArray(new Piece[0])) {
-            if(p.getPlayer().equals(attacker) && !(p instanceof King)) {
+            if(p.getPlayer().equals(attacker)) {
                 Vector2[] attackingSquares = p.getMovableSquares(false);
                 for(Vector2 square : attackingSquares) {
                     Piece attackedPiece = this.getPieceAtPosition(square);
@@ -667,6 +720,8 @@ public class Board {
             default -> throw new IllegalArgumentException("There's no piece called '" + piece + "'.");
         }
 
+        this.notationMoves.add(this.vector2ToSquare(this.awaitPromotion) + "=" + piece.substring(0, 1));
+
         this.placePiece(p, this.awaitPromotion);
         this.awaitPromotion = null;
 
@@ -740,7 +795,20 @@ public class Board {
         this.clicked = square;
     }
 
+    /**
+     * Sets the callback function to be fired when a move is made.
+     * @param onNextTurn Runnable that is run when a move is made
+     */
     public void bindNextTurnEvent(Runnable onNextTurn) {
         this.onNextTurn = onNextTurn;
+    }
+
+    /**
+     * Submits a resignation by player. Game ends.
+     * @param player Player who is resigning
+     */
+    public void resign(@NotNull Player player) {
+        this.gameOver = true;
+        this.gameOverReason = (player.equals(Player.WHITE) ? "White" : "Black") + " resigns.";
     }
 }

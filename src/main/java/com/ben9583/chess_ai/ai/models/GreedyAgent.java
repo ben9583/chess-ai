@@ -57,4 +57,14 @@ public class GreedyAgent extends AIAgent {
 
         return possibleMoves.get(randomGenerator.nextInt(possibleMoves.size()));
     }
+
+    @Override
+    public boolean shouldResign() {
+        return false;
+    }
+
+    @Override
+    public String promote() {
+        return "Queen";
+    }
 }

@@ -87,6 +87,11 @@ public abstract class Piece {
      */
     protected boolean isValidTarget(Vector2 position, boolean considerChecks, Stream<Runnable> onMoves, Stream<Runnable> onBacks) {
         if(!this.board.boardExistsAt(position)) return false;
+        if(this instanceof King) {
+            if(considerChecks && Math.abs(this.getPosition().getX() - position.getX()) == 2 && this.board.isInCheck(this.player)) {
+                return false;
+            }
+        }
 
         Piece target = this.board.getPieceAtPosition(position);
         if(target != null && target.getPlayer().equals(this.player)) return false;

@@ -105,7 +105,6 @@ public class Board2D extends JComponent {
 
             if(!promotionPrompt && clickedPiece != null && squarePositions.contains(square) && clickedPiece.getPlayer().equals(board.getWhoseTurn())) {
                 board.setClicked(null);
-                System.out.println(board.toFEN());
                 moveThePiece = true;
             } else if(promotionPrompt && square.getX() == COLUMNS + 1) {
                 switch (square.getY()) {
