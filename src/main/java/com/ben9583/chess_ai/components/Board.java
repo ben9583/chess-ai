@@ -517,6 +517,26 @@ public class Board {
     }
 
     /**
+     * Runs func after moving movingPiece to end, then reverts to the previous position.
+     * @param movingPiece Piece to move
+     * @param end Square to move movingPiece to
+     * @param func Runnable to run on the board after moving
+     */
+    public void runOnMove(Piece movingPiece, Vector2 end, Runnable func) {
+        Vector2 start = this.getPosition(movingPiece);
+
+        assert this.getPieceAtPosition(end) == null || !this.getPieceAtPosition(end).getPlayer().equals(movingPiece.getPlayer());
+        Piece attackedPiece = this.setPosition(movingPiece, end);
+
+        func.run();
+
+        Piece thereBetterBeNothingHere = this.setPosition(movingPiece, start);
+        assert thereBetterBeNothingHere == null;
+
+        if(attackedPiece != null) this.placePiece(attackedPiece, end);
+    }
+
+    /**
      * Returns whether player is checkmated.
      * @param player Player to check if checkmated
      * @return Whether player is checkmated
