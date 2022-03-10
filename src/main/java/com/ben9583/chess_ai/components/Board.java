@@ -217,6 +217,32 @@ public class Board {
     }
 
     /**
+     * Returns an array of all the pieces on this board, where the 3rd dimension
+     * corresponds whether a specific kind of piece is present.
+     * This is in order of Pawn, Knight, Bishop, Rook, Queen, King.
+     * For example, a knight on (x, y) would have an entry [0.0, 1.0, 0.0, 0.0, 0.0, 0.0]
+     * at [y][x] on the array.
+     * @return 3D array of floats corresponding to the pieces on this board
+     */
+    public float[][][] get3DBoard() {
+        float[][][] out = new float[this.board.length][this.board[0].length][];
+        System.out.println();
+        for(int y = 0; y < this.board.length; y++) {
+            for(int x = 0; x < this.board[y].length; x++) {
+                if(this.board[y][x] instanceof Pawn) out[y][x] = new float[]{1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f};
+                else if(this.board[y][x] instanceof Knight) out[y][x] = new float[]{0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f};
+                else if(this.board[y][x] instanceof Bishop) out[y][x] = new float[]{0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f};
+                else if(this.board[y][x] instanceof Rook) out[y][x] = new float[]{0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f};
+                else if(this.board[y][x] instanceof Queen) out[y][x] = new float[]{0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f};
+                else if(this.board[y][x] instanceof King) out[y][x] = new float[]{0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f};
+                else out[y][x] = new float[]{0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f};
+            }
+        }
+
+        return out;
+    }
+
+    /**
      * Returns the full set of pieces belonging to player, in no particular order.
      * @param player Player on this board
      * @return Pieces belonging to player
