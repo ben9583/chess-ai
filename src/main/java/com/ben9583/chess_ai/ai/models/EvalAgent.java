@@ -9,9 +9,19 @@ import com.ben9583.chess_ai.utils.Vector2;
 
 import java.util.concurrent.atomic.AtomicReference;
 
+/**
+ * AI Agent that relies on an evaluation of the board to pick the move
+ * that has the highest evaluation. Higher values are preferred.
+ */
 public abstract class EvalAgent extends AIAgent {
     public EvalAgent(Board board, Player player) { super(board, player); }
 
+    /**
+     * Evaluates the board at its current state,
+     * with a higher value indicating a more favorable position
+     * for this agent.
+     * @return Evaluation of the position for the agent
+     */
     public abstract float evaluatePosition();
 
     @Override
