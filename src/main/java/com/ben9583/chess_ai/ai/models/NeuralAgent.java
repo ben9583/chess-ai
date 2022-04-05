@@ -99,8 +99,9 @@ public class NeuralAgent extends EvalAgent{
 
     @Override
     public float evaluatePosition() {
+        // Put this in a size-1 array since we aren't batching
         INDArray input = Nd4j.createFromArray(new float[][][][] { super.board.get3DBoard() });
-        
+
         return 0;
     }
 
