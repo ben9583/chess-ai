@@ -226,7 +226,6 @@ public class Board {
      */
     public float[][][] get3DBoard() {
         float[][][] out = new float[this.board.length][this.board[0].length][];
-        System.out.println();
         for(int y = 0; y < this.board.length; y++) {
             for(int x = 0; x < this.board[y].length; x++) {
                 if(this.board[y][x] instanceof Pawn && this.board[y][x].getPlayer().equals(Player.WHITE)) out[y][x] = new float[]{1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f};
