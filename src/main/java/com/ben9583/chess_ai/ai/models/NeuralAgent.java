@@ -10,6 +10,8 @@ import org.deeplearning4j.nn.multilayer.MultiLayerNetwork;
 import org.deeplearning4j.nn.weights.WeightInit;
 import org.jetbrains.annotations.Nullable;
 import org.nd4j.linalg.activations.Activation;
+import org.nd4j.linalg.api.ndarray.INDArray;
+import org.nd4j.linalg.factory.Nd4j;
 import org.nd4j.linalg.learning.config.Adam;
 
 import java.util.Random;
@@ -25,10 +27,17 @@ public class NeuralAgent extends EvalAgent{
     /* Neural network configuration for this agent. If not initialized, will be null. */
     @Nullable
     private MultiLayerConfiguration conf = null;
-
     /* Neural network model constructed from conf. If not initialized, will be null. */
     @Nullable
     private MultiLayerNetwork model = null;
+
+    /* Height of the board. */
+    public static final int BOARD_HEIGHT = 8;
+    /* Width of the board. */
+    public static final int BOARD_WIDTH = 8;
+    /* Number of distinct pieces. PNBRQKpnbrqk = 12.*/
+    /* NOTE: May want to consider piece's player as another dimension. */
+    public static final int NUM_DISTINCT_PIECES = 12;
 
     public NeuralAgent(Board board, Player player, long seed) {
         super(board, player);
@@ -81,7 +90,7 @@ public class NeuralAgent extends EvalAgent{
                         .activation(Activation.SIGMOID)
                         .build()
                 )
-                .setInputType(InputType.convolutionalFlat(8, 8, 6))
+                .setInputType(InputType.convolutionalFlat(NeuralAgent.BOARD_HEIGHT, NeuralAgent.BOARD_WIDTH, NeuralAgent.NUM_DISTINCT_PIECES))
                 .build();
 
         this.model = new MultiLayerNetwork(this.conf);
@@ -90,6 +99,8 @@ public class NeuralAgent extends EvalAgent{
 
     @Override
     public float evaluatePosition() {
+        INDArray input = Nd4j.createFromArray(new float[][][][] { super.board.get3DBoard() });
+        
         return 0;
     }
 
