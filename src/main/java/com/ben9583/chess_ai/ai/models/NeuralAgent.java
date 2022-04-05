@@ -72,7 +72,7 @@ public class NeuralAgent extends EvalAgent{
                         .build()
                 )
                 .layer(new DenseLayer.Builder()
-                        .activation(Activation.RELU)
+                        .activation(Activation.IDENTITY)
                         .nOut(128)
                         .build()
                 )
