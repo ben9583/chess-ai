@@ -2,6 +2,7 @@ package com.ben9583.chess_ai.ai.models;
 
 import com.ben9583.chess_ai.components.Board;
 import com.ben9583.chess_ai.components.Player;
+import org.deeplearning4j.nn.conf.CNN2DFormat;
 import org.deeplearning4j.nn.conf.MultiLayerConfiguration;
 import org.deeplearning4j.nn.conf.NeuralNetConfiguration;
 import org.deeplearning4j.nn.conf.inputs.InputType;
@@ -13,6 +14,7 @@ import org.nd4j.linalg.activations.Activation;
 import org.nd4j.linalg.api.ndarray.INDArray;
 import org.nd4j.linalg.factory.Nd4j;
 import org.nd4j.linalg.learning.config.Adam;
+import org.nd4j.linalg.lossfunctions.LossFunctions;
 
 import java.util.Random;
 
@@ -43,6 +45,7 @@ public class NeuralAgent extends EvalAgent{
         super(board, player);
 
         this.RANDOM_SEED = seed;
+        this.constructNeuralNetwork();
     }
 
     public NeuralAgent(Board board, Player player) { this(board, player, new Random().nextLong()); }
@@ -58,39 +61,45 @@ public class NeuralAgent extends EvalAgent{
                 .weightInit(WeightInit.XAVIER)
                 .updater(new Adam(1e-3))
                 .list()
-                .layer(new ConvolutionLayer.Builder(3, 3)
+                .layer(new Convolution2D.Builder(3, 3)
                         .stride(1, 1)
                         .nOut(16)
                         .activation(Activation.IDENTITY)
+                        .name("Conv0")
                         .build()
                 )
                 .layer(new SubsamplingLayer.Builder(PoolingType.MAX)
                         .kernelSize(2, 2)
                         .stride(2, 2)
+                        .name("Sub0")
                         .build()
                 )
-                .layer(new ConvolutionLayer.Builder(3, 3)
+                .layer(new Convolution2D.Builder(3, 3)
                         .stride(1, 1)
                         .nOut(32)
                         .activation(Activation.IDENTITY)
+                        .name("Conv1")
                         .build()
                 )
                 .layer(new SubsamplingLayer.Builder(PoolingType.MAX)
                         .kernelSize(2, 2)
                         .stride(2, 2)
+                        .name("Sub1")
                         .build()
                 )
                 .layer(new DenseLayer.Builder()
                         .activation(Activation.IDENTITY)
                         .nOut(128)
+                        .name("Dense0")
                         .build()
                 )
-                .layer(new OutputLayer.Builder()
+                .layer(new OutputLayer.Builder(LossFunctions.LossFunction.MSE)
                         .nOut(1)
                         .activation(Activation.SIGMOID)
+                        .name("Output")
                         .build()
                 )
-                .setInputType(InputType.convolutionalFlat(NeuralAgent.BOARD_HEIGHT, NeuralAgent.BOARD_WIDTH, NeuralAgent.NUM_DISTINCT_PIECES))
+                .setInputType(InputType.convolutional(NeuralAgent.BOARD_HEIGHT, NeuralAgent.BOARD_WIDTH, NeuralAgent.NUM_DISTINCT_PIECES, CNN2DFormat.NHWC))
                 .build();
 
         this.model = new MultiLayerNetwork(this.conf);
@@ -99,10 +108,15 @@ public class NeuralAgent extends EvalAgent{
 
     @Override
     public float evaluatePosition() {
+        if(this.model == null) throw new RuntimeException("Model for " + this + " is not yet initialized, but tried to use anyway.");
+
         // Put this in a size-1 array since we aren't batching
         INDArray input = Nd4j.createFromArray(new float[][][][] { super.board.get3DBoard() });
+        INDArray output = this.model.output(input);
 
-        return 0;
+        float out = output.getFloat(0);
+        // System.out.println(out);
+        return out;
     }
 
     @Override

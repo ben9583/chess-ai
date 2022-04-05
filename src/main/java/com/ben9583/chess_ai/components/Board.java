@@ -229,13 +229,20 @@ public class Board {
         System.out.println();
         for(int y = 0; y < this.board.length; y++) {
             for(int x = 0; x < this.board[y].length; x++) {
-                if(this.board[y][x] instanceof Pawn) out[y][x] = new float[]{1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f};
-                else if(this.board[y][x] instanceof Knight) out[y][x] = new float[]{0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f};
-                else if(this.board[y][x] instanceof Bishop) out[y][x] = new float[]{0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f};
-                else if(this.board[y][x] instanceof Rook) out[y][x] = new float[]{0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f};
-                else if(this.board[y][x] instanceof Queen) out[y][x] = new float[]{0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f};
-                else if(this.board[y][x] instanceof King) out[y][x] = new float[]{0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f};
-                else out[y][x] = new float[]{0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f};
+                if(this.board[y][x] instanceof Pawn && this.board[y][x].getPlayer().equals(Player.WHITE)) out[y][x] = new float[]{1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f};
+                else if(this.board[y][x] instanceof Knight && this.board[y][x].getPlayer().equals(Player.WHITE)) out[y][x] = new float[]{0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f};
+                else if(this.board[y][x] instanceof Bishop && this.board[y][x].getPlayer().equals(Player.WHITE)) out[y][x] = new float[]{0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f};
+                else if(this.board[y][x] instanceof Rook && this.board[y][x].getPlayer().equals(Player.WHITE)) out[y][x] = new float[]{0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f};
+                else if(this.board[y][x] instanceof Queen && this.board[y][x].getPlayer().equals(Player.WHITE)) out[y][x] = new float[]{0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f};
+                else if(this.board[y][x] instanceof King && this.board[y][x].getPlayer().equals(Player.WHITE)) out[y][x] = new float[]{0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f};
+                else if(this.board[y][x] instanceof Pawn && this.board[y][x].getPlayer().equals(Player.BLACK)) out[y][x] = new float[]{0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f};
+                else if(this.board[y][x] instanceof Knight && this.board[y][x].getPlayer().equals(Player.BLACK)) out[y][x] = new float[]{0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f};
+                else if(this.board[y][x] instanceof Bishop && this.board[y][x].getPlayer().equals(Player.BLACK)) out[y][x] = new float[]{0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f};
+                else if(this.board[y][x] instanceof Rook && this.board[y][x].getPlayer().equals(Player.BLACK)) out[y][x] = new float[]{0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f};
+                else if(this.board[y][x] instanceof Queen && this.board[y][x].getPlayer().equals(Player.BLACK)) out[y][x] = new float[]{0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f};
+                else if(this.board[y][x] instanceof King && this.board[y][x].getPlayer().equals(Player.BLACK)) out[y][x] = new float[]{0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f};
+
+                else out[y][x] = new float[]{0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f};
             }
         }
 

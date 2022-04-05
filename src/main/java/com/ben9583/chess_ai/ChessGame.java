@@ -2,6 +2,7 @@ package com.ben9583.chess_ai;
 
 import com.ben9583.chess_ai.ai.AIAgent;
 import com.ben9583.chess_ai.ai.models.GreedyAgent;
+import com.ben9583.chess_ai.ai.models.NeuralAgent;
 import com.ben9583.chess_ai.ai.models.RandomAgent;
 import com.ben9583.chess_ai.ai.utils.Move;
 import com.ben9583.chess_ai.components.Board;
@@ -27,7 +28,7 @@ public class ChessGame {
         this.board = new Board();
         this.aiPlayers = new HashMap<>();
 
-        this.aiPlayers.put(Player.BLACK, new GreedyAgent(this.board, Player.BLACK, 7));
+        this.aiPlayers.put(Player.BLACK, new NeuralAgent(this.board, Player.BLACK, 7));
 
         if(graphicsEnabled) {
             this.window = new ChessAIWindow(this.board);
