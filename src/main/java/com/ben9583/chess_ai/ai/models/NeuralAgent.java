@@ -6,6 +6,7 @@ import org.deeplearning4j.nn.conf.MultiLayerConfiguration;
 import org.deeplearning4j.nn.conf.NeuralNetConfiguration;
 import org.deeplearning4j.nn.conf.inputs.InputType;
 import org.deeplearning4j.nn.conf.layers.*;
+import org.deeplearning4j.nn.multilayer.MultiLayerNetwork;
 import org.deeplearning4j.nn.weights.WeightInit;
 import org.jetbrains.annotations.Nullable;
 import org.nd4j.linalg.activations.Activation;
@@ -24,6 +25,10 @@ public class NeuralAgent extends EvalAgent{
     /* Neural network configuration for this agent. If not initialized, will be null. */
     @Nullable
     private MultiLayerConfiguration conf = null;
+
+    /* Neural network model constructed from conf. If not initialized, will be null. */
+    @Nullable
+    private MultiLayerNetwork model = null;
 
     public NeuralAgent(Board board, Player player, long seed) {
         super(board, player);
@@ -78,6 +83,9 @@ public class NeuralAgent extends EvalAgent{
                 )
                 .setInputType(InputType.convolutionalFlat(8, 8, 6))
                 .build();
+
+        this.model = new MultiLayerNetwork(this.conf);
+        model.init();
     }
 
     @Override
