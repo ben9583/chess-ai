@@ -5,9 +5,17 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>org.example</groupId>
+    <groupId>com.ben9583</groupId>
     <artifactId>chess_ai</artifactId>
-    <version>0.1.0</version>
+    <version>0.2.0</version>
+
+    <properties>
+        <maven.compiler.source>17</maven.compiler.source>
+        <maven.compiler.target>17</maven.compiler.target>
+        <dl4j-master.version>1.0.0-M2</dl4j-master.version>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    </properties>
+
     <dependencies>
         <dependency>
             <groupId>org.jetbrains</groupId>
@@ -17,10 +25,6 @@
         </dependency>
     </dependencies>
 
-    <properties>
-        <maven.compiler.source>17</maven.compiler.source>
-        <maven.compiler.target>17</maven.compiler.target>
-    </properties>
 
     <build>
         <plugins>
