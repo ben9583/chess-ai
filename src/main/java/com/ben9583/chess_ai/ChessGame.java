@@ -34,11 +34,13 @@ public class ChessGame {
             this.window = new ChessAIWindow(this.board);
             this.board.bindNextTurnEvent(this::onNextTurn);
         } else {
-            this.aiPlayers.put(Player.WHITE, new RandomAgent(this.board, Player.WHITE, 7));
+            long time = System.currentTimeMillis();
+            this.aiPlayers.put(Player.WHITE, new NeuralAgent(this.board, Player.WHITE, 7));
             while(!this.board.isGameOver()) this.onNextTurn();
 
             System.out.println(this.board.getGameOverReason());
             System.out.println(this.board.getPGN());
+            System.out.println("Done in " + ((System.currentTimeMillis() - time) / 1000.0) + "s");
         }
     }
 
