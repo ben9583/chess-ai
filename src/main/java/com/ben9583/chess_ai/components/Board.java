@@ -432,6 +432,33 @@ public class Board {
                         this.notationMoves.add("1/2-1/2");
                     }
                 }
+            } else if(piece instanceof King && oldPosition.equals(end)) {
+                StringBuilder notationMove = new StringBuilder();
+                if(this.whoseTurn.equals(Player.BLACK)) notationMove.append(this.fullMoveNumber).append(".");
+                if(end.getX() == 2) notationMove.append("O-O-O");
+                else if(end.getX() == 5) notationMove.append("O-O");
+
+                if(this.isInCheck(this.whoseTurn)) {
+                    if(this.gameOverReason != null && this.gameOverReason.startsWith("Checkmate")) {
+                        notationMove.append('#');
+                    } else {
+                        notationMove.append('+');
+                    }
+                }
+
+                this.notationMoves.add(notationMove.toString());
+
+                if(this.gameOver) {
+                    if(this.gameOverReason.startsWith("Checkmate")) {
+                        if(this.whoseTurn.equals(Player.WHITE)) {
+                            this.notationMoves.add("1-0");
+                        } else {
+                            this.notationMoves.add("0-1");
+                        }
+                    } else {
+                        this.notationMoves.add("1/2-1/2");
+                    }
+                }
             }
         }
     }

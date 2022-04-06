@@ -77,14 +77,14 @@ public class King extends PositionalPiece {
             if(super.getBoard().canCastleWhiteKing() && super.isValidTarget(super.getPosition().add(Vector2.EAST), false, disableCastleWhiteKingSideRunnables, enableCastleWhiteKingSideRunnables) && super.isValidTarget(super.getPosition().add(kingSideCastleSquare), false, castleWhiteKingSideRunnables, uncastleWhiteKingSideRunnables)) {
                 out.add(kingSideCastleSquare);
             }
-            if(super.getBoard().canCastleWhiteQueen() && super.isValidTarget(super.getPosition().add(Vector2.WEST), false, disableCastleWhiteQueenSideRunnables, enableCastleWhiteQueenSideRunnables) && super.isValidTarget(super.getPosition().add(queenSideCastleSquare), false, castleWhiteQueenSideRunnables, uncastleWhiteQueenSideRunnables)) {
+            if(super.getBoard().canCastleWhiteQueen() && super.isValidTarget(super.getPosition().add(Vector2.WEST), false, disableCastleWhiteQueenSideRunnables, enableCastleWhiteQueenSideRunnables) && super.isValidTarget(queenSideCastleSquare.add(Vector2.WEST), false, disableCastleWhiteQueenSideRunnables, enableCastleWhiteQueenSideRunnables) && super.isValidTarget(super.getPosition().add(queenSideCastleSquare), false, castleWhiteQueenSideRunnables, uncastleWhiteQueenSideRunnables)) {
                 out.add(queenSideCastleSquare);
             }
         } else {
             if(super.getBoard().canCastleBlackKing() && super.isValidTarget(super.getPosition().add(Vector2.EAST), false, disableCastleBlackKingSideRunnables, enableCastleBlackKingSideRunnables) && super.isValidTarget(super.getPosition().add(kingSideCastleSquare), false, castleBlackKingSideRunnables, uncastleBlackKingSideRunnables)) {
                 out.add(kingSideCastleSquare);
             }
-            if(super.getBoard().canCastleBlackQueen() && super.isValidTarget(super.getPosition().add(Vector2.WEST), false, disableCastleBlackQueenSideRunnables, enableCastleBlackQueenSideRunnables) && super.isValidTarget(super.getPosition().add(queenSideCastleSquare), false, castleBlackQueenSideRunnables, uncastleBlackQueenSideRunnables)) {
+            if(super.getBoard().canCastleBlackQueen() && super.isValidTarget(super.getPosition().add(Vector2.WEST), false, disableCastleBlackQueenSideRunnables, enableCastleBlackQueenSideRunnables) && super.isValidTarget(queenSideCastleSquare.add(Vector2.WEST), false, disableCastleWhiteQueenSideRunnables, enableCastleWhiteQueenSideRunnables) && super.isValidTarget(super.getPosition().add(queenSideCastleSquare), false, castleBlackQueenSideRunnables, uncastleBlackQueenSideRunnables)) {
                 out.add(queenSideCastleSquare);
 
             }
