@@ -7,7 +7,8 @@ import com.ben9583.chess_ai.components.Player;
 import com.ben9583.chess_ai.components.pieces.Piece;
 import com.ben9583.chess_ai.utils.Vector2;
 
-import java.util.concurrent.atomic.AtomicReference;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * AI Agent that relies on an evaluation of the board to pick the move
@@ -17,12 +18,13 @@ public abstract class EvalAgent extends AIAgent {
     public EvalAgent(Board board, Player player) { super(board, player); }
 
     /**
-     * Evaluates the board at its current state,
+     * Evaluates the array of boards,
      * with a higher value indicating a more favorable position
      * for this agent.
-     * @return Evaluation of the position for the agent
+     * @param boards Array of boards to evaluate
+     * @return Array of evaluations for each respective board in boards
      */
-    public abstract float evaluatePosition();
+    public abstract float[] evaluatePositions(float[][][][] boards);
 
     @Override
     public Move getNextMove() {
@@ -30,20 +32,27 @@ public abstract class EvalAgent extends AIAgent {
 
         Piece[] myPieces = super.getMyPieces();
 
-        Move bestMove = null;
-        float bestEval = -Float.MAX_VALUE;
-
+        List<float[][][]> boards = new ArrayList<>();
+        List<Move> moves = new ArrayList<>();
         for(Piece p : myPieces) {
             Vector2[] possiblePositions = p.getMovableSquares(true);
             for(Vector2 v : possiblePositions) {
                 Move m = new Move(p, v);
-                AtomicReference<Float> eval = new AtomicReference<>(0.0f);
+                moves.add(m);
 
-                super.board.runOnMove(p, v, () -> eval.set(this.evaluatePosition()));
-                if(eval.get() > bestEval) {
-                    bestEval = eval.get();
-                    bestMove = m;
-                }
+                super.board.runOnMove(p, v, () -> boards.add(super.board.get3DBoard()));
+            }
+        }
+
+        float[] evals = this.evaluatePositions(boards.toArray(new float[boards.size()][][][]));
+
+        Move bestMove = null;
+        float bestEval = -Float.MAX_VALUE;
+
+        for(int i = 0; i < evals.length; i++) {
+            if(evals[i] > bestEval) {
+                bestEval = evals[i];
+                bestMove = moves.get(i);
             }
         }
 

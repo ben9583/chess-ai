@@ -107,15 +107,13 @@ public class NeuralAgent extends EvalAgent{
     }
 
     @Override
-    public float evaluatePosition() {
+    public float[] evaluatePositions(float[][][][] boards) {
         if(this.model == null) throw new RuntimeException("Model for " + this + " is not yet initialized, but tried to use anyway.");
 
-        // Put this in a size-1 array since we aren't batching
-        INDArray input = Nd4j.createFromArray(new float[][][][] { super.board.get3DBoard() });
+        INDArray input = Nd4j.createFromArray(boards);
         INDArray output = this.model.output(input);
 
-        float out = output.getFloat(0);
-        // System.out.println(out);
+        float[] out = output.toFloatVector();
         return out;
     }
 
