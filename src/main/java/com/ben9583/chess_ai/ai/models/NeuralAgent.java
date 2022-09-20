@@ -7,6 +7,8 @@ import org.deeplearning4j.nn.conf.MultiLayerConfiguration;
 import org.deeplearning4j.nn.conf.NeuralNetConfiguration;
 import org.deeplearning4j.nn.conf.inputs.InputType;
 import org.deeplearning4j.nn.conf.layers.*;
+import org.deeplearning4j.nn.gradient.DefaultGradient;
+import org.deeplearning4j.nn.gradient.Gradient;
 import org.deeplearning4j.nn.multilayer.MultiLayerNetwork;
 import org.deeplearning4j.nn.weights.WeightInit;
 import org.jetbrains.annotations.Nullable;
@@ -16,6 +18,10 @@ import org.nd4j.linalg.factory.Nd4j;
 import org.nd4j.linalg.learning.config.Adam;
 import org.nd4j.linalg.lossfunctions.LossFunctions;
 
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.Random;
 
 /**
@@ -45,7 +51,6 @@ public class NeuralAgent extends EvalAgent{
         super(board, player);
 
         this.RANDOM_SEED = seed;
-        this.constructNeuralNetwork();
     }
 
     public NeuralAgent(Board board, Player player) { this(board, player, new Random().nextLong()); }
@@ -54,7 +59,7 @@ public class NeuralAgent extends EvalAgent{
      * Constructs a neural network configuration for this
      * AI Agent using the random seed supplied on construction.
      */
-    private void constructNeuralNetwork() {
+    public void constructNeuralNetwork() {
         this.conf = new NeuralNetConfiguration.Builder()
                 .seed(this.RANDOM_SEED)
                 .l2(0.0005)
@@ -88,7 +93,7 @@ public class NeuralAgent extends EvalAgent{
                         .build()
                 )
                 .layer(new DenseLayer.Builder()
-                        .activation(Activation.IDENTITY)
+                        .activation(Activation.RELU)
                         .nOut(128)
                         .name("Dense0")
                         .build()
@@ -104,6 +109,80 @@ public class NeuralAgent extends EvalAgent{
 
         this.model = new MultiLayerNetwork(this.conf);
         model.init();
+        this.model.setGradient(new DefaultGradient(Nd4j.zeros(1, 10737)));
+    }
+
+    /**
+     * Returns the MultiLayerNetwork model for this agent.
+     * @return Model for this agent.
+     */
+    public @Nullable MultiLayerNetwork getModel() {
+        return this.model;
+    }
+
+    /**
+     * Sets the MultiLayerNetwork model for this agent.
+     * @param model The new model for this agent.
+     */
+    public void setModel(@Nullable MultiLayerNetwork model) {
+        this.model = model;
+    }
+
+    /**
+     * Sets the gradient of this agent's model randomly and
+     * mutates the parameters using the gradient.
+     */
+    public void mutate() {
+        Gradient grad = new DefaultGradient();
+        grad.setGradientFor("0_W", Nd4j.rand(16, 12, 3, 3).sub(0.5).mul(10));
+        grad.setGradientFor("2_W", Nd4j.rand(32, 16, 3, 3).sub(0.5).mul(10));
+        grad.setGradientFor("4_W", Nd4j.rand(32, 128).sub(0.5).mul(10));
+        grad.setGradientFor("5_W", Nd4j.rand(128, 1).sub(0.5).mul(10));
+        grad.setGradientFor("0_b", Nd4j.rand(16).sub(0.5).mul(10));
+        grad.setGradientFor("2_b", Nd4j.rand(32).sub(0.5).mul(10));
+        grad.setGradientFor("4_b", Nd4j.rand(128).sub(0.5).mul(10));
+        grad.setGradientFor("5_b", Nd4j.rand(1).sub(0.5).mul(10));
+
+        this.getModel().update(grad);
+    }
+
+    /**
+     * Loads the parameter data from path into this agent.
+     * @param path Path to the .dat file containing the INDArray for the parameters.
+     * @return True if the load was successful, false otherwise.
+     */
+    public boolean loadDataFromFile(String path) {
+        try {
+            FileInputStream fis = new FileInputStream(path);
+            ObjectInputStream ois = new ObjectInputStream(fis);
+            Gradient data = (Gradient) new ObjectInputStream(new FileInputStream(path)).readObject();
+            this.getModel().setGradient(data);
+            fis.close();
+            ois.close();
+        } catch (Exception e) {
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * Saves the parameter data from this agent to path.
+     * @param path Path to the .dat file to save the INDArray for the parameters.
+     * @return True if the save was successful, false otherwise.
+     */
+    public boolean saveDataToFile(String path) {
+        try {
+            FileOutputStream fos = new FileOutputStream(path);
+            ObjectOutputStream oos = new ObjectOutputStream(fos);
+            oos.writeObject(this.getModel().getGradient());
+            fos.close();
+            oos.close();
+        } catch (Exception e) {
+            return false;
+        }
+
+        return true;
     }
 
     @Override

@@ -6,12 +6,8 @@ import com.ben9583.chess_ai.ai.utils.Move;
 import com.ben9583.chess_ai.components.Board;
 import com.ben9583.chess_ai.components.Player;
 import com.ben9583.chess_ai.gfx.ChessAIWindow;
-import org.deeplearning4j.nn.gradient.DefaultGradient;
-import org.deeplearning4j.nn.gradient.Gradient;
-import org.deeplearning4j.nn.multilayer.MultiLayerNetwork;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.nd4j.linalg.factory.Nd4j;
 
 import java.io.*;
 import java.util.HashMap;

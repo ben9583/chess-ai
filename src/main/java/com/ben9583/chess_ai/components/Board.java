@@ -5,15 +5,19 @@ import com.ben9583.chess_ai.utils.Vector2;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 
 public class Board {
 
     /* 2D array representing all the pieces belonging to this board at (x, y). */
-    private final Piece[][] board;
+    private Piece[][] board;
     /* Lookup table to make finding pieces easier. */
     @NotNull
-    private final Map<Piece, Vector2> pieces;
+    private Map<Piece, Vector2> pieces;
 
     /* Whose turn it is in the game. */
     @NotNull
@@ -25,35 +29,39 @@ public class Board {
     private boolean castleBlackKing;
     private boolean castleBlackQueen;
 
+    /* The previous square the pawn was on before promoting. This is used to properly notates capture-then-promote sequences. */
+    @Nullable
+    private Vector2 prevPromotion;
+
     /* The Vector2 corresponding to the pawn awaiting a decision on promotion. Null if no piece to promote. */
     @Nullable
-    private Vector2 awaitPromotion = null;
+    private Vector2 awaitPromotion;
 
     /* The Vector2 corresponding to the position at which en passant can take place, following FEN notation. */
     @Nullable
-    private Vector2 enPassantPosition = null;
+    private Vector2 enPassantPosition;
 
     /* Number of half-moves since a capture or pawn move. Draw at 50. */
-    private int halfMoveClock = 0;
+    private int halfMoveClock;
     /* Number of full-moves occurred since this game started. */
-    private int fullMoveNumber = 1;
+    private int fullMoveNumber;
 
     /* Number of times a given position has been reached. Two positions are equal by rules of threefold repetition. */
-    private final Map<String, Integer> reachedPositions = new HashMap<>();
+    private Map<String, Integer> reachedPositions;
 
     /* Record of all moves made, in standard algebraic notation. */
-    private final List<String> notationMoves = new ArrayList<>();
+    private List<String> notationMoves;
 
     /* Whether the game is over because of checkmate or stalemate. */
-    private boolean gameOver = false;
+    private boolean gameOver;
     /* Message for why the game ended. */
-    private String gameOverReason = null;
+    private String gameOverReason;
 
     /* Whether the next move should increment the turn. Used for validating checks. */
-    private boolean disableMovementThisTurn = false;
+    private boolean disableMovementThisTurn;
 
     /* The piece the user clicked. See also: Board2D */
-    private Vector2 clicked = null;
+    private Vector2 clicked;
 
     /* External function to be run when a turn has ended. */
     private Runnable onNextTurn;
@@ -83,11 +91,26 @@ public class Board {
             }
         }
 
+        this.prevPromotion = null;
+        this.awaitPromotion = null;
+        this.enPassantPosition = null;
+
+        this.reachedPositions = new HashMap<>();
+        this.notationMoves = new ArrayList<>();
+
+        this.disableMovementThisTurn = false;
         this.whoseTurn = Player.WHITE;
         this.castleWhiteKing = true;
         this.castleWhiteQueen = true;
         this.castleBlackKing = true;
         this.castleBlackQueen = true;
+
+        this.clicked = null;
+        this.halfMoveClock = 0;
+        this.fullMoveNumber = 1;
+
+        this.gameOver = false;
+        this.gameOverReason = null;
     }
 
     /**
@@ -760,6 +783,13 @@ public class Board {
     }
 
     /**
+     * Sets the square of the piece that is about to promote.
+     * Used for notating capture-then-promote sequences.
+     * @param square Square of the piece that is about to promote
+     */
+    public void setPrevPromotion(Vector2 square) { this.prevPromotion = square; }
+
+    /**
      * Marks the game as 'awaiting promotion' by disabling movement
      * until the player whose turn it is promotes.
      *
@@ -799,9 +829,14 @@ public class Board {
             default -> throw new IllegalArgumentException("There's no piece called '" + piece + "'.");
         }
 
-        this.notationMoves.add(this.vector2ToSquare(this.awaitPromotion) + "=" + piece.substring(0, 1));
+        if(this.prevPromotion.getX() != this.awaitPromotion.getX()) {
+            this.notationMoves.add(this.vector2ToSquare(this.prevPromotion) + "x" + this.vector2ToSquare(this.awaitPromotion) + "=" + piece.charAt(0));
+        } else {
+            this.notationMoves.add(this.vector2ToSquare(this.awaitPromotion) + "=" + piece.charAt(0));
+        }
 
         this.placePiece(p, this.awaitPromotion);
+        this.prevPromotion = null;
         this.awaitPromotion = null;
 
         this.nextTurn();
@@ -889,5 +924,51 @@ public class Board {
     public void resign(@NotNull Player player) {
         this.gameOver = true;
         this.gameOverReason = (player.equals(Player.WHITE) ? "White" : "Black") + " resigns.";
+    }
+
+    /**
+     * Resets the board to the starting position.
+     */
+    public void resetGame() {
+        this.board = new Piece[][]{
+                { new Rook(Player.WHITE, this), new Knight(Player.WHITE, this), new Bishop(Player.WHITE, this), new Queen(Player.WHITE, this), new King(Player.WHITE, this), new Bishop(Player.WHITE, this), new Knight(Player.WHITE, this), new Rook(Player.WHITE, this) },
+                { new Pawn(Player.WHITE, this), new Pawn(Player.WHITE, this), new Pawn(Player.WHITE, this), new Pawn(Player.WHITE, this), new Pawn(Player.WHITE, this), new Pawn(Player.WHITE, this), new Pawn(Player.WHITE, this), new Pawn(Player.WHITE, this) },
+                { null, null, null, null, null, null, null, null },
+                { null, null, null, null, null, null, null, null },
+                { null, null, null, null, null, null, null, null },
+                { null, null, null, null, null, null, null, null },
+                { new Pawn(Player.BLACK, this), new Pawn(Player.BLACK, this), new Pawn(Player.BLACK, this), new Pawn(Player.BLACK, this), new Pawn(Player.BLACK, this), new Pawn(Player.BLACK, this), new Pawn(Player.BLACK, this), new Pawn(Player.BLACK, this) },
+                { new Rook(Player.BLACK, this), new Knight(Player.BLACK, this), new Bishop(Player.BLACK, this), new Queen(Player.BLACK, this), new King(Player.BLACK, this), new Bishop(Player.BLACK, this), new Knight(Player.BLACK, this), new Rook(Player.BLACK, this) }
+        };
+
+        this.pieces = new HashMap<>();
+
+        for(int i = 0; i < this.board.length; i++) {
+            for(int j = 0; j < this.board[i].length; j++) {
+                if(this.board[i][j] != null) {
+                    this.pieces.put(this.board[i][j], new Vector2(j, i));
+                }
+            }
+        }
+
+        this.awaitPromotion = null;
+        this.enPassantPosition = null;
+
+        this.reachedPositions = new HashMap<>();
+        this.notationMoves = new ArrayList<>();
+
+        this.disableMovementThisTurn = false;
+        this.whoseTurn = Player.WHITE;
+        this.castleWhiteKing = true;
+        this.castleWhiteQueen = true;
+        this.castleBlackKing = true;
+        this.castleBlackQueen = true;
+
+        this.clicked = null;
+        this.halfMoveClock = 0;
+        this.fullMoveNumber = 1;
+
+        this.gameOver = false;
+        this.gameOverReason = null;
     }
 }
