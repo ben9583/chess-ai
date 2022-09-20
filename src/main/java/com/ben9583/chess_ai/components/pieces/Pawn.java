@@ -86,6 +86,7 @@ public class Pawn extends Piece {
         }
 
         if(position.getY() == 7 || position.getY() == 0) {
+            super.getBoard().setPrevPromotion(this.getPosition());
             super.getBoard().awaitPromotion(position);
         }
 
