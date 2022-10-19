@@ -35,7 +35,6 @@ public class ChessGame {
 
         if(graphicsEnabled) {
             this.window = new ChessAIWindow(this.board);
-            this.aiPlayers.put(Player.BLACK, new RandomAgent(this.board, Player.BLACK));
             this.board.bindNextTurnEvent(this::onNextTurn);
         } else {
             NeuralAgent whiteAgent = new NeuralAgent(this.board, Player.WHITE, 83);
