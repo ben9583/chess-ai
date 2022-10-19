@@ -129,15 +129,15 @@ public class Board2D extends JComponent {
                 board.setClicked(square);
             }
 
-            if(board.awaitingPromotion()) {
-                promotionPrompt = true;
-            }
-
             squarePositions.clear();
             circlePositions.clear();
 
             if(moveThePiece) {
                 clickedPiece.movePiece(square);
+            }
+
+            if(board.awaitingPromotion()) {
+                promotionPrompt = true;
             }
 
             clickedPiece = null;
