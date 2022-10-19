@@ -70,7 +70,7 @@ public class Board2D extends JComponent {
     private static final Color[] COLORS = { Board2D.DARK_COLOR, Board2D.LIGHT_COLOR, Board2D.DARK_RED_COLOR, Board2D.LIGHT_RED_COLOR };
 
     /* Color corresponding to the circle that shows a possible move. */
-    private static final Color GRAY = new Color(75, 75, 75, 89);
+    private static final Color GRAY = new Color(25, 25, 25, 89);
 
     /**
      * Converts pixel coordinates to square positions on the board.
@@ -133,15 +133,15 @@ public class Board2D extends JComponent {
                 board.setClicked(square);
             }
 
-            if(board.awaitingPromotion()) {
-                promotionPrompt = true;
-            }
-
             squarePositions.clear();
             circlePositions.clear();
 
             if(moveThePiece) {
                 clickedPiece.movePiece(square);
+            }
+
+            if(board.awaitingPromotion()) {
+                promotionPrompt = true;
             }
 
             clickedPiece = null;

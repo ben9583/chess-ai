@@ -366,6 +366,12 @@ public class Board {
             this.gameOverReason = "Checkmate! " + (this.whoseTurn.equals(Player.WHITE) ? "Black" : "White") + " wins.";
             return;
         }
+        if(this.isStalemate(this.whoseTurn)) {
+            //System.out.println("Stalemate! Draw.");
+            this.gameOver = true;
+            this.gameOverReason = "Stalemate! Draw.";
+            return;
+        }
         if(this.halfMoveClock == 50) {
             //System.out.println("Draw by 50-move rule.");
             this.gameOver = true;
@@ -595,19 +601,37 @@ public class Board {
     }
 
     /**
+     * Returns whether the player has any legal moves they can make.
+     * @param player The player to check for legal moves
+     * @return Whether the player has any legal moves
+     */
+    public boolean hasLegalMoves(Player player) {
+        for(Piece p : this.pieces.keySet().toArray(new Piece[0])) {
+            if(p.getPlayer().equals(player)) {
+                Vector2[] movableSquares = p.getMovableSquares(true);
+                if(movableSquares.length > 0) return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Returns whether player is stalemated.
+     * @param player Player to check if stalemated
+     * @return Whether player is stalemated
+     */
+    public boolean isStalemate(Player player) {
+        return !this.hasLegalMoves(player) && !this.isInCheck(player);
+    }
+
+    /**
      * Returns whether player is checkmated.
      * @param player Player to check if checkmated
      * @return Whether player is checkmated
      */
     public boolean isCheckmate(Player player) {
-        for(Piece p : this.pieces.keySet().toArray(new Piece[0])) {
-            if(p.getPlayer().equals(player)) {
-                Vector2[] movableSquares = p.getMovableSquares(true);
-                if(movableSquares.length > 0) return false;
-            }
-        }
-
-        return true;
+        return !this.hasLegalMoves(player) && this.isInCheck(player);
     }
 
     /**
