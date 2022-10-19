@@ -124,6 +124,10 @@ public class Board2D extends JComponent {
                         board.promote("Queen");
                         promotionPrompt = false;
                     }
+                    case 3 -> {
+                        board.promote("Knook");
+                        promotionPrompt = false;
+                    }
                 }
             } else if(!promotionPrompt) {
                 board.setClicked(square);
@@ -246,6 +250,11 @@ public class Board2D extends JComponent {
             g2.setColor(Board2D.LIGHT_COLOR);
             g2.fillRect(x, y, SQUARE_WIDTH, SQUARE_HEIGHT);
             g2.drawImage(images.get(whoseTurn + "Queen"), x, y, null);
+
+            y += SQUARE_HEIGHT;
+            g2.setColor(Board2D.DARK_COLOR);
+            g2.fillRect(x, y, SQUARE_WIDTH, SQUARE_HEIGHT);
+            g2.drawImage(images.get(whoseTurn + "Knook"), x, y, null);
         }
 
         if(this.board.isGameOver()) {

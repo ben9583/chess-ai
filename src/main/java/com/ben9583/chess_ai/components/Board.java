@@ -71,14 +71,14 @@ public class Board {
      */
     public Board() {
         this.board = new Piece[][]{
-                { new Rook(Player.WHITE, this), new Knight(Player.WHITE, this), new Bishop(Player.WHITE, this), new Queen(Player.WHITE, this), new King(Player.WHITE, this), new Bishop(Player.WHITE, this), new Knight(Player.WHITE, this), new Rook(Player.WHITE, this) },
+                { new Rook(Player.WHITE, this), new Knook(Player.WHITE, this), new Bishop(Player.WHITE, this), new Queen(Player.WHITE, this), new King(Player.WHITE, this), new Bishop(Player.WHITE, this), new Knight(Player.WHITE, this), new Rook(Player.WHITE, this) },
                 { new Pawn(Player.WHITE, this), new Pawn(Player.WHITE, this), new Pawn(Player.WHITE, this), new Pawn(Player.WHITE, this), new Pawn(Player.WHITE, this), new Pawn(Player.WHITE, this), new Pawn(Player.WHITE, this), new Pawn(Player.WHITE, this) },
                 { null, null, null, null, null, null, null, null },
                 { null, null, null, null, null, null, null, null },
                 { null, null, null, null, null, null, null, null },
                 { null, null, null, null, null, null, null, null },
                 { new Pawn(Player.BLACK, this), new Pawn(Player.BLACK, this), new Pawn(Player.BLACK, this), new Pawn(Player.BLACK, this), new Pawn(Player.BLACK, this), new Pawn(Player.BLACK, this), new Pawn(Player.BLACK, this), new Pawn(Player.BLACK, this) },
-                { new Rook(Player.BLACK, this), new Knight(Player.BLACK, this), new Bishop(Player.BLACK, this), new Queen(Player.BLACK, this), new King(Player.BLACK, this), new Bishop(Player.BLACK, this), new Knight(Player.BLACK, this), new Rook(Player.BLACK, this) }
+                { new Rook(Player.BLACK, this), new Knook(Player.BLACK, this), new Bishop(Player.BLACK, this), new Queen(Player.BLACK, this), new King(Player.BLACK, this), new Bishop(Player.BLACK, this), new Knight(Player.BLACK, this), new Rook(Player.BLACK, this) }
         };
 
         this.pieces = new HashMap<>();
@@ -242,7 +242,7 @@ public class Board {
     /**
      * Returns an array of all the pieces on this board, where the 3rd dimension
      * corresponds whether a specific kind of piece is present.
-     * This is in order of Pawn, Knight, Bishop, Rook, Queen, King.
+     * This is in order of Pawn, Knight, Bishop, Rook, Queen, Knook, King.
      * For example, a knight on (x, y) would have an entry [0.0, 1.0, 0.0, 0.0, 0.0, 0.0]
      * at [y][x] on the array.
      * @return 3D array of floats corresponding to the pieces on this board
@@ -251,20 +251,22 @@ public class Board {
         float[][][] out = new float[this.board.length][this.board[0].length][];
         for(int y = 0; y < this.board.length; y++) {
             for(int x = 0; x < this.board[y].length; x++) {
-                if(this.board[y][x] instanceof Pawn && this.board[y][x].getPlayer().equals(Player.WHITE)) out[y][x] = new float[]{1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f};
-                else if(this.board[y][x] instanceof Knight && this.board[y][x].getPlayer().equals(Player.WHITE)) out[y][x] = new float[]{0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f};
-                else if(this.board[y][x] instanceof Bishop && this.board[y][x].getPlayer().equals(Player.WHITE)) out[y][x] = new float[]{0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f};
-                else if(this.board[y][x] instanceof Rook && this.board[y][x].getPlayer().equals(Player.WHITE)) out[y][x] = new float[]{0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f};
-                else if(this.board[y][x] instanceof Queen && this.board[y][x].getPlayer().equals(Player.WHITE)) out[y][x] = new float[]{0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f};
-                else if(this.board[y][x] instanceof King && this.board[y][x].getPlayer().equals(Player.WHITE)) out[y][x] = new float[]{0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f};
-                else if(this.board[y][x] instanceof Pawn && this.board[y][x].getPlayer().equals(Player.BLACK)) out[y][x] = new float[]{0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f};
-                else if(this.board[y][x] instanceof Knight && this.board[y][x].getPlayer().equals(Player.BLACK)) out[y][x] = new float[]{0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f};
-                else if(this.board[y][x] instanceof Bishop && this.board[y][x].getPlayer().equals(Player.BLACK)) out[y][x] = new float[]{0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f};
-                else if(this.board[y][x] instanceof Rook && this.board[y][x].getPlayer().equals(Player.BLACK)) out[y][x] = new float[]{0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f};
-                else if(this.board[y][x] instanceof Queen && this.board[y][x].getPlayer().equals(Player.BLACK)) out[y][x] = new float[]{0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f};
-                else if(this.board[y][x] instanceof King && this.board[y][x].getPlayer().equals(Player.BLACK)) out[y][x] = new float[]{0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f};
+                if(this.board[y][x] instanceof Pawn && this.board[y][x].getPlayer().equals(Player.WHITE)) out[y][x] = new float[]{1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f};
+                else if(this.board[y][x] instanceof Knight && this.board[y][x].getPlayer().equals(Player.WHITE)) out[y][x] = new float[]{0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f};
+                else if(this.board[y][x] instanceof Bishop && this.board[y][x].getPlayer().equals(Player.WHITE)) out[y][x] = new float[]{0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f};
+                else if(this.board[y][x] instanceof Rook && this.board[y][x].getPlayer().equals(Player.WHITE)) out[y][x] = new float[]{0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f};
+                else if(this.board[y][x] instanceof Queen && this.board[y][x].getPlayer().equals(Player.WHITE)) out[y][x] = new float[]{0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f};
+                else if(this.board[y][x] instanceof Knook && this.board[y][x].getPlayer().equals(Player.WHITE)) out[y][x] = new float[]{0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f};
+                else if(this.board[y][x] instanceof King && this.board[y][x].getPlayer().equals(Player.WHITE)) out[y][x] = new float[]{0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f};
+                else if(this.board[y][x] instanceof Pawn && this.board[y][x].getPlayer().equals(Player.BLACK)) out[y][x] = new float[]{0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f};
+                else if(this.board[y][x] instanceof Knight && this.board[y][x].getPlayer().equals(Player.BLACK)) out[y][x] = new float[]{0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f};
+                else if(this.board[y][x] instanceof Bishop && this.board[y][x].getPlayer().equals(Player.BLACK)) out[y][x] = new float[]{0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f};
+                else if(this.board[y][x] instanceof Rook && this.board[y][x].getPlayer().equals(Player.BLACK)) out[y][x] = new float[]{0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f};
+                else if(this.board[y][x] instanceof Queen && this.board[y][x].getPlayer().equals(Player.BLACK)) out[y][x] = new float[]{0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f};
+                else if(this.board[y][x] instanceof Knook && this.board[y][x].getPlayer().equals(Player.BLACK)) out[y][x] = new float[]{0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f};
+                else if(this.board[y][x] instanceof King && this.board[y][x].getPlayer().equals(Player.BLACK)) out[y][x] = new float[]{0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f};
 
-                else out[y][x] = new float[]{0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f};
+                else out[y][x] = new float[]{0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f};
             }
         }
 
@@ -826,6 +828,7 @@ public class Board {
             case "Bishop" -> p = new Bishop(this.whoseTurn, this);
             case "Rook" -> p = new Rook(this.whoseTurn, this);
             case "Queen" -> p = new Queen(this.whoseTurn, this);
+            case "Knook" -> p = new Knook(this.whoseTurn, this);
             default -> throw new IllegalArgumentException("There's no piece called '" + piece + "'.");
         }
 
@@ -931,14 +934,14 @@ public class Board {
      */
     public void resetGame() {
         this.board = new Piece[][]{
-                { new Rook(Player.WHITE, this), new Knight(Player.WHITE, this), new Bishop(Player.WHITE, this), new Queen(Player.WHITE, this), new King(Player.WHITE, this), new Bishop(Player.WHITE, this), new Knight(Player.WHITE, this), new Rook(Player.WHITE, this) },
+                { new Rook(Player.WHITE, this), new Knook(Player.WHITE, this), new Bishop(Player.WHITE, this), new Queen(Player.WHITE, this), new King(Player.WHITE, this), new Bishop(Player.WHITE, this), new Knight(Player.WHITE, this), new Rook(Player.WHITE, this) },
                 { new Pawn(Player.WHITE, this), new Pawn(Player.WHITE, this), new Pawn(Player.WHITE, this), new Pawn(Player.WHITE, this), new Pawn(Player.WHITE, this), new Pawn(Player.WHITE, this), new Pawn(Player.WHITE, this), new Pawn(Player.WHITE, this) },
                 { null, null, null, null, null, null, null, null },
                 { null, null, null, null, null, null, null, null },
                 { null, null, null, null, null, null, null, null },
                 { null, null, null, null, null, null, null, null },
                 { new Pawn(Player.BLACK, this), new Pawn(Player.BLACK, this), new Pawn(Player.BLACK, this), new Pawn(Player.BLACK, this), new Pawn(Player.BLACK, this), new Pawn(Player.BLACK, this), new Pawn(Player.BLACK, this), new Pawn(Player.BLACK, this) },
-                { new Rook(Player.BLACK, this), new Knight(Player.BLACK, this), new Bishop(Player.BLACK, this), new Queen(Player.BLACK, this), new King(Player.BLACK, this), new Bishop(Player.BLACK, this), new Knight(Player.BLACK, this), new Rook(Player.BLACK, this) }
+                { new Rook(Player.BLACK, this), new Knook(Player.BLACK, this), new Bishop(Player.BLACK, this), new Queen(Player.BLACK, this), new King(Player.BLACK, this), new Bishop(Player.BLACK, this), new Knight(Player.BLACK, this), new Rook(Player.BLACK, this) }
         };
 
         this.pieces = new HashMap<>();

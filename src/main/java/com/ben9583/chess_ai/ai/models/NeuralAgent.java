@@ -43,9 +43,9 @@ public class NeuralAgent extends EvalAgent{
     public static final int BOARD_HEIGHT = 8;
     /* Width of the board. */
     public static final int BOARD_WIDTH = 8;
-    /* Number of distinct pieces. PNBRQKpnbrqk = 12.*/
+    /* Number of distinct pieces. PNBRQOKpnbrqok = 14.*/
     /* NOTE: May want to consider piece's player as another dimension. */
-    public static final int NUM_DISTINCT_PIECES = 12;
+    public static final int NUM_DISTINCT_PIECES = 14;
 
     public NeuralAgent(Board board, Player player, long seed) {
         super(board, player);
@@ -134,7 +134,7 @@ public class NeuralAgent extends EvalAgent{
      */
     public void mutate() {
         Gradient grad = new DefaultGradient();
-        grad.setGradientFor("0_W", Nd4j.rand(16, 12, 3, 3).sub(0.5).mul(10));
+        grad.setGradientFor("0_W", Nd4j.rand(16, 14, 3, 3).sub(0.5).mul(10));
         grad.setGradientFor("2_W", Nd4j.rand(32, 16, 3, 3).sub(0.5).mul(10));
         grad.setGradientFor("4_W", Nd4j.rand(32, 128).sub(0.5).mul(10));
         grad.setGradientFor("5_W", Nd4j.rand(128, 1).sub(0.5).mul(10));

@@ -2,6 +2,7 @@ package com.ben9583.chess_ai;
 
 import com.ben9583.chess_ai.ai.AIAgent;
 import com.ben9583.chess_ai.ai.models.NeuralAgent;
+import com.ben9583.chess_ai.ai.models.RandomAgent;
 import com.ben9583.chess_ai.ai.utils.Move;
 import com.ben9583.chess_ai.components.Board;
 import com.ben9583.chess_ai.components.Player;
@@ -34,6 +35,7 @@ public class ChessGame {
 
         if(graphicsEnabled) {
             this.window = new ChessAIWindow(this.board);
+            this.aiPlayers.put(Player.BLACK, new RandomAgent(this.board, Player.BLACK));
             this.board.bindNextTurnEvent(this::onNextTurn);
         } else {
             NeuralAgent whiteAgent = new NeuralAgent(this.board, Player.WHITE, 83);
